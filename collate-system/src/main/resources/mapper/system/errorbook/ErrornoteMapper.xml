@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.task.collate.errornote.mapper.ErrornoteMapper">
+    
+    <resultMap type="Errornote" id="ErrornoteResult">
+        <result property="id"    column="id"    />
+        <result property="errorquestionId"    column="errorquestion_id"    />
+        <result property="noteContent"    column="note_content"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErrornoteVo">
+        select id, errorquestion_id, note_content, create_time, update_time from errornote
+    </sql>
+
+    <select id="selectErrornoteList" parameterType="Errornote" resultMap="ErrornoteResult">
+        <include refid="selectErrornoteVo"/>
+        <where>  
+            <if test="errorquestionId != null "> and errorquestion_id = #{errorquestionId}</if>
+            <if test="noteContent != null  and noteContent != ''"> and note_content = #{noteContent}</if>
+        </where>
+    </select>
+    
+    <select id="selectErrornoteById" parameterType="Long" resultMap="ErrornoteResult">
+        <include refid="selectErrornoteVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertErrornote" parameterType="Errornote" useGeneratedKeys="true" keyProperty="id">
+        insert into errornote
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="errorquestionId != null">errorquestion_id,</if>
+            <if test="noteContent != null and noteContent != ''">note_content,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="errorquestionId != null">#{errorquestionId},</if>
+            <if test="noteContent != null and noteContent != ''">#{noteContent},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErrornote" parameterType="Errornote">
+        update errornote
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="errorquestionId != null">errorquestion_id = #{errorquestionId},</if>
+            <if test="noteContent != null and noteContent != ''">note_content = #{noteContent},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErrornoteById" parameterType="Long">
+        delete from errornote where id = #{id}
+    </delete>
+
+    <delete id="deleteErrornoteByIds" parameterType="String">
+        delete from errornote where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

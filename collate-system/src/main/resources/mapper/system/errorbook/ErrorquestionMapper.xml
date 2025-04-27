@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.task.collate.errorquestion.mapper.ErrorquestionMapper">
+    
+    <resultMap type="Errorquestion" id="ErrorquestionResult">
+        <result property="id"    column="id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="wrongAnswer"    column="wrong_answer"    />
+        <result property="importanceLevel"    column="importance_level"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErrorquestionVo">
+        select id, question_id, user_id, wrong_answer, importance_level, create_time, update_time from errorquestion
+    </sql>
+
+    <select id="selectErrorquestionList" parameterType="Errorquestion" resultMap="ErrorquestionResult">
+        <include refid="selectErrorquestionVo"/>
+        <where>  
+            <if test="questionId != null "> and question_id = #{questionId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="wrongAnswer != null  and wrongAnswer != ''"> and wrong_answer = #{wrongAnswer}</if>
+            <if test="importanceLevel != null "> and importance_level = #{importanceLevel}</if>
+        </where>
+    </select>
+    
+    <select id="selectErrorquestionById" parameterType="Long" resultMap="ErrorquestionResult">
+        <include refid="selectErrorquestionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertErrorquestion" parameterType="Errorquestion" useGeneratedKeys="true" keyProperty="id">
+        insert into errorquestion
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">question_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="wrongAnswer != null and wrongAnswer != ''">wrong_answer,</if>
+            <if test="importanceLevel != null">importance_level,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">#{questionId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="wrongAnswer != null and wrongAnswer != ''">#{wrongAnswer},</if>
+            <if test="importanceLevel != null">#{importanceLevel},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErrorquestion" parameterType="Errorquestion">
+        update errorquestion
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="questionId != null">question_id = #{questionId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="wrongAnswer != null and wrongAnswer != ''">wrong_answer = #{wrongAnswer},</if>
+            <if test="importanceLevel != null">importance_level = #{importanceLevel},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErrorquestionById" parameterType="Long">
+        delete from errorquestion where id = #{id}
+    </delete>
+
+    <delete id="deleteErrorquestionByIds" parameterType="String">
+        delete from errorquestion where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

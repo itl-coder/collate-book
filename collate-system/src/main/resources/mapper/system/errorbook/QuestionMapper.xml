@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.task.collate.question.mapper.QuestionMapper">
+    
+    <resultMap type="Question" id="QuestionResult">
+        <result property="id"    column="id"    />
+        <result property="questionContent"    column="question_content"    />
+        <result property="questionType"    column="question_type"    />
+        <result property="correctAnswer"    column="correct_answer"    />
+        <result property="subjectId"    column="subject_id"    />
+        <result property="bookId"    column="book_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <!-- 多表联查的映射 -->
+    <resultMap type="QuestionVO" id="MultQuestionResult">
+        <result property="id" column="id" />
+        <result property="questionContent" column="question_content" />
+        <result property="questionType" column="question_type" />
+        <result property="correctAnswer" column="correct_answer" />
+        <result property="subjectId" column="subject_id" />
+        <result property="bookId" column="book_id" />
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+        <!-- 映射 Subject 信息 -->
+        <result property="subjectName" column="subject_name"/>
+        <!-- 只映射 Book 的 bookName 字段 -->
+        <result property="bookName" column="book_name"/>
+    </resultMap>
+
+    <!-- 题目信息及其选项映射 -->
+    <resultMap id="quesFrontResult" type="QuestionFrontVO">
+        <!-- 主表字段 -->
+        <id property="id" column="id"/>
+        <result property="questionContent" column="question_content"/>
+        <result property="questionType" column="question_type"/>
+        <result property="correctAnswer" column="correct_answer"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+
+        <!-- 关联学科 -->
+        <result property="subjectId" column="subject_id"/>
+        <result property="subjectName" column="subject_name"/>
+
+        <!-- 关联教辅 -->
+        <result property="bookId" column="book_id"/>
+        <result property="bookName" column="book_name"/>
+
+        <!-- 一对多选项 -->
+        <collection property="options" ofType="Options">
+            <result property="id"    column="id"    />
+            <result property="questionId"    column="question_id"    />
+            <result property="optionLabel"    column="option_label"    />
+            <result property="content"    column="content"    />
+            <result property="isCorrect"    column="is_correct"    />
+            <result property="createdAt"    column="created_at"    />
+            <result property="updatedAt"    column="updated_at"    />
+        </collection>
+    </resultMap>
+
+
+
+    <sql id="selectQuestionVo">
+        select id, question_content, question_type, correct_answer, subject_id, book_id, create_time, update_time from question
+    </sql>
+
+    <select id="selectQuestionList" parameterType="Question" resultMap="MultQuestionResult">
+        <!-- 查询的主表 -->
+        SELECT
+        q.id,
+        q.question_content,
+        q.question_type,
+        q.correct_answer,
+        q.create_time,
+        q.update_time,
+        s.id AS subject_id,
+        s.subject_name,
+        b.id AS book_id,
+        b.book_name
+        FROM
+        question q
+        JOIN
+        `subject` s ON q.subject_id = s.id
+        JOIN
+        book b ON s.id = b.subject_id
+        <!-- 动态条件部分 -->
+        <where>
+            <if test="questionContent != null and questionContent != ''">
+                AND q.question_content = #{questionContent}
+            </if>
+            <if test="questionType != null and questionType != ''">
+                AND q.question_type = #{questionType}
+            </if>
+            <if test="correctAnswer != null and correctAnswer != ''">
+                AND q.correct_answer = #{correctAnswer}
+            </if>
+            <if test="subjectId != null">
+                AND q.subject_id = #{subjectId}
+            </if>
+            <if test="bookId != null">
+                AND q.book_id = #{bookId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectQuestionById" parameterType="Long" resultMap="QuestionResult">
+        <include refid="selectQuestionVo"/>
+        where id = #{id}
+    </select>
+
+    <!-- 一对多的sql -->
+    <select id="selectFrontQuestionList" parameterType="integer" resultMap="quesFrontResult">
+    <!-- 查询的主表 -->
+        SELECT
+        q.id,
+        o.question_id,
+        q.question_content,
+        q.question_type,
+        q.correct_answer,
+        q.create_time,
+        q.update_time,
+        s.id AS subject_id,
+        s.subject_name,
+        b.id AS book_id,
+        b.book_name,
+        option_label,
+        content,
+        is_correct
+        FROM
+        question q
+        JOIN `subject` s ON q.subject_id = s.id
+        JOIN book b ON b.id = s.id
+        JOIN `OPTIONS` o ON q.id = o.question_id
+        ORDER BY
+        option_label ASC
+    </select>
+
+    <insert id="insertQuestion" parameterType="Question" useGeneratedKeys="true" keyProperty="id">
+        insert into question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="questionContent != null and questionContent != ''">question_content,</if>
+            <if test="questionType != null and questionType != ''">question_type,</if>
+            <if test="correctAnswer != null and correctAnswer != ''">correct_answer,</if>
+            <if test="subjectId != null">subject_id,</if>
+            <if test="bookId != null">book_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="questionContent != null and questionContent != ''">#{questionContent},</if>
+            <if test="questionType != null and questionType != ''">#{questionType},</if>
+            <if test="correctAnswer != null and correctAnswer != ''">#{correctAnswer},</if>
+            <if test="subjectId != null">#{subjectId},</if>
+            <if test="bookId != null">#{bookId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuestion" parameterType="Question">
+        update question
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="questionContent != null and questionContent != ''">question_content = #{questionContent},</if>
+            <if test="questionType != null and questionType != ''">question_type = #{questionType},</if>
+            <if test="correctAnswer != null and correctAnswer != ''">correct_answer = #{correctAnswer},</if>
+            <if test="subjectId != null">subject_id = #{subjectId},</if>
+            <if test="bookId != null">book_id = #{bookId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuestionById" parameterType="Long">
+        delete from question where id = #{id}
+    </delete>
+
+    <delete id="deleteQuestionByIds" parameterType="String">
+        delete from question where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

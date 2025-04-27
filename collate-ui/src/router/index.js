@@ -47,6 +47,16 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/view',
+    component: () => import('@/views/front/ErrorQuestionPage'),
+    hidden: true
+  },
+   {
+    path: '/question',
+    component: () => import('@/views/front/AllQuestionList'),
+    hidden: true
+  },
+  {
     path: '/register',
     component: () => import('@/views/register'),
     hidden: true

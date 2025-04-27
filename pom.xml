@@ -172,6 +172,7 @@
         <module>collate-quartz</module>
         <module>collate-generator</module>
         <module>collate-common</module>
+        <module>collate-errorbook</module>
     </modules>
     <packaging>pom</packaging>
 
