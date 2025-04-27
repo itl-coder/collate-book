@@ -36,7 +36,6 @@
           </div>
         </div>
 
-
         <div class="answer-section" v-if="showAnswers[question.id]">
           <div class="answer-title">正确答案：</div>
           <div class="correct-answer" v-html="formatAnswerContent(question.correctAnswer)"></div>
@@ -90,7 +89,7 @@
 .question-options {
   margin-bottom: 12px;
   padding: 10px;
-  background-color: #f5f7fa;
+  //background-color: #f5f7fa;
   border-radius: 4px;
 }
 
