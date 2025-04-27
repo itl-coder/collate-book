@@ -9,10 +9,33 @@
             {{ question.questionType }}
           </el-tag>
         </div>
-
+        <!-- 题目内容 -->
         <div class="question-content">
           <div class="content-text" v-html="formatQuestionContent(question.questionContent)"></div>
         </div>
+        <!-- 选项部分 -->
+        <div class="question-options" v-if="question.questionType === '单选' || question.questionType === '多选'">
+          <div v-for="(option, index) in question.options" :key="index" class="option">
+            <!-- 多选题 -->
+            <el-checkbox
+              v-if="question.questionType === '多选'"
+              v-model="selectedOptions"
+              :label="option.optionLabel"
+            >
+              {{ option.optionLabel }}
+            </el-checkbox>
+
+            <!-- 单选题 绑定到当前题目的选中项  -->
+            <el-radio
+              v-else
+              v-model="question.selectedOption"
+            :label="option.optionLabel"
+            >
+            {{ option.optionLabel }}.{{ option.content}}
+            </el-radio>
+          </div>
+        </div>
+
 
         <div class="answer-section" v-if="showAnswers[question.id]">
           <div class="answer-title">正确答案：</div>
@@ -23,11 +46,11 @@
           <div class="meta-info">
             <span class="meta-item">
               <i class="el-icon-collection"></i>
-              科目ID: {{ question.subjectName }}
+              科目名称: {{ question.subjectName }}
             </span>
             <span class="meta-item" v-if="question.bookId">
               <i class="el-icon-notebook-2"></i>
-              教辅ID: {{ question.bookName }}
+              教辅名称: {{ question.bookName }}
             </span>
             <!-- 查看/隐藏答案按钮，放置在教辅ID后面 -->
             <div class="action-buttons">
@@ -63,6 +86,19 @@
   </div>
 </template>
 <style lang="scss" scoped>
+
+.question-options {
+  margin-bottom: 12px;
+  padding: 10px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.option {
+  margin-bottom: 8px;
+}
+
+
 .question-container {
   max-width: 900px;
   margin: 0 auto;
@@ -193,6 +229,10 @@ import {frontListQuestion} from "@/api/errorbook/question";
 export default {
   data() {
     return {
+      // 多选
+      selectedOptions:[],
+      selectedOption:"",
+      // 题目列表
       questions: [ ],
       showAnswers: {}, // 控制答案显示状态
       currentPage: 1, // 当前页码
