@@ -23,8 +23,10 @@
               v-if="question.questionType === '多选'"
               v-model="question.selectedOptions"
               :label="option.optionLabel"
+              :disabled="question.isSubmitted"
+              :class="getOptionClass(question, option)"
             >
-              {{ option.optionLabel }}
+              {{ option.optionLabel }}.{{ option.content }}
             </el-checkbox>
 
             <!-- 单选题 -->
@@ -32,13 +34,15 @@
               v-else
               v-model="question.selectedOption"
               :label="option.optionLabel"
+              :disabled="question.isSubmitted"
+              :class="getOptionClass(question, option)"
             >
               {{ option.optionLabel }}.{{ option.content }}
             </el-radio>
           </div>
         </div>
 
-        <!-- 简答题输入框（仅针对简答题） -->
+        <!-- 简答题输入框 -->
         <div class="question-answer" v-if="question.questionType === '简答'">
           <el-input
             v-model="question.answerText"
@@ -47,10 +51,11 @@
             rows="4"
             clearable
             class="answer-input"
+            :disabled="question.isSubmitted"
           ></el-input>
         </div>
 
-        <!-- 提交按钮 & 查看答案 -->
+        <!-- 提交按钮 & 查看答案按钮 -->
         <div class="question-footer">
           <div class="meta-info">
             <span class="meta-item">
@@ -73,7 +78,7 @@
               提交答案
             </el-button>
 
-            <!-- 查看答案按钮（提交后才显示） -->
+            <!-- 查看答案按钮 -->
             <el-button
               v-if="question.isSubmitted"
               size="small"
@@ -86,7 +91,7 @@
           </div>
         </div>
 
-        <!-- 答案区域（提交后才显示） -->
+        <!-- 答案展示区域 -->
         <div class="answer-section" v-if="question.isSubmitted && showAnswers[question.id]">
           <div class="answer-title">正确答案：</div>
           <div class="correct-answer" v-html="formatAnswerContent(question.correctAnswer)"></div>
@@ -94,7 +99,7 @@
       </div>
     </div>
 
-    <!-- 分页 -->
+    <!-- 分页组件 -->
     <div class="pagination-container">
       <el-pagination
         background
@@ -109,8 +114,6 @@
     </div>
   </div>
 </template>
-
-
 <script>
 import { frontListQuestion } from "@/api/errorbook/question";
 
@@ -118,9 +121,9 @@ export default {
   data() {
     return {
       questions: [],
-      showAnswers: {}, // 控制答案显示状态
-      currentPage: 1, // 当前页码
-      pageSize: 3, // 每页显示数量
+      showAnswers: {}, // 控制每道题是否展开答案
+      currentPage: 1,
+      pageSize: 3,
     };
   },
   created() {
@@ -128,69 +131,105 @@ export default {
   },
   methods: {
     async getFrontList() {
-      let query = {
+      const query = {
         pageSize: this.pageSize,
         currentPage: this.currentPage,
       };
       const res = await frontListQuestion(query);
       console.log("getFrontList: ", res);
 
-      // 初始化题目数据，确保每个题目有独立的 selectedOption/selectedOptions 和 isSubmitted
       this.questions = res.data.map(question => ({
         ...question,
-        selectedOption: "", // 单选题选中项
-        selectedOptions: [], // 多选题选中项
-        answerText:"", // 简答题
-        isSubmitted: false, // 是否已提交
+        selectedOption: "",
+        selectedOptions: [],
+        answerText: "",
+        isSubmitted: false,
+        userAnswer: [],
       }));
     },
 
-    // 检查是否有答案（用于禁用提交按钮）
     hasAnswer(question) {
       if (question.questionType === "单选") {
         return question.selectedOption !== "";
       } else if (question.questionType === "多选") {
         return question.selectedOptions.length > 0;
       } else if (question.questionType === "简答") {
-        return question.answerText.trim() !== ""; // 判断简答题是否有输入
+        return question.answerText.trim() !== "";
       }
       return false;
     },
 
-    // 提交答案
     submitAnswer(questionId) {
       const question = this.questions.find(q => q.id === questionId);
       if (question) {
         question.isSubmitted = true;
+        if (question.questionType === "单选") {
+          question.userAnswer = [question.selectedOption];
+        } else if (question.questionType === "多选") {
+          question.userAnswer = question.selectedOptions;
+        } else if (question.questionType === "简答") {
+          question.userAnswer = [question.answerText];
+        }
         this.$message.success("答案已提交！");
       }
     },
 
-    // 其他方法保持不变...
+    // 选项正确性判断 - 只有在提交之后才去高亮
+    getOptionClass(question, option) {
+      if (!question.isSubmitted) return '';
+      if (this.isOptionCorrect(question, option)) return 'correct';
+      if (this.isOptionIncorrect(question, option)) return 'incorrect';
+      return '';
+    },
+
+    // 判断选项是否正确（只要是正确答案就绿色）
+    isOptionCorrect(question, option) {
+      if (!question.isSubmitted) return false; // 没提交就不高亮
+      return option.isCorrect === 1; // 只要正确答案都绿色
+    },
+
+    // 判断选项是否错误（用户提交且选中了错误选项）
+    isOptionIncorrect(question, option) {
+      if (!question.isSubmitted) return false; // 没提交就不高亮
+      if (question.questionType === "单选") {
+        return question.selectedOption === option.optionLabel && option.isCorrect !== 1;
+      }
+      if (question.questionType === "多选") {
+        return question.selectedOptions.includes(option.optionLabel) && option.isCorrect !== 1;
+      }
+      return false;
+    },
+
+
     getQuestionTypeTag(type) {
       const typeMap = {
-        单选题: "primary",
-        多选题: "success",
-        判断题: "warning",
-        简答题: "danger",
-        填空题: "info",
+        单选: "primary",
+        多选: "success",
+        判断: "warning",
+        简答: "danger",
+        填空: "info",
       };
       return typeMap[type] || "";
     },
+
     formatQuestionContent(content) {
       return content.replace(/\n/g, "<br>");
     },
+
     formatAnswerContent(answer) {
       return `<span style="color: #67C23A; font-weight: 500">${answer}</span>`;
     },
+
     toggleAnswer(questionId) {
       this.$set(this.showAnswers, questionId, !this.showAnswers[questionId]);
     },
+
     handleCurrentChange(val) {
       this.currentPage = val;
       this.showAnswers = {};
       this.getFrontList();
     },
+
     handleSizeChange(val) {
       this.pageSize = val;
       this.currentPage = 1;
@@ -247,13 +286,8 @@ export default {
   background-color: #f5f7fa;
   border-radius: 4px;
   line-height: 1.6;
-
-  .content-text {
-    white-space: pre-wrap;
-  }
 }
 
-/* 选项区域样式 */
 .question-options {
   margin: 15px 0;
   padding: 12px;
@@ -265,13 +299,11 @@ export default {
     display: flex;
     align-items: center;
 
-    /* 单选/多选框样式 */
     ::v-deep .el-radio,
     ::v-deep .el-checkbox {
       margin-right: 8px;
     }
 
-    /* 选项标签样式 */
     ::v-deep .el-radio__label,
     ::v-deep .el-checkbox__label {
       font-size: 14px;
@@ -280,7 +312,19 @@ export default {
   }
 }
 
-/* 简答题输入框样式 */
+/* 正确选项：字体绿色 */
+.correct ::v-deep .el-radio__label,
+.correct ::v-deep .el-checkbox__label {
+  color: #67c23a !important;
+}
+
+/* 错误选项：字体红色 */
+.incorrect ::v-deep .el-radio__label,
+.incorrect ::v-deep .el-checkbox__label {
+  color: #f56c6c !important;
+}
+
+
 .question-answer {
   margin-top: 15px;
 }
@@ -291,22 +335,8 @@ export default {
   border-radius: 4px;
   padding: 10px;
   font-size: 14px;
-  color: #333;
-  transition: border-color 0.3s ease;
-
-  &:focus-within {
-    border-color: #409eff;
-  }
-
-  .el-input__inner {
-    padding: 10px;
-    border-radius: 4px;
-    font-size: 14px;
-    line-height: 1.6;
-  }
 }
 
-/* 答案区域样式 */
 .answer-section {
   margin-top: 12px;
   padding: 12px;
@@ -326,7 +356,6 @@ export default {
   }
 }
 
-/* 底部操作区域 */
 .question-footer {
   margin-top: 15px;
   padding-top: 12px;
@@ -339,54 +368,20 @@ export default {
     gap: 15px;
     font-size: 12px;
     color: #909399;
-
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
   }
 
-  /* 提交按钮样式 */
   .el-button {
     margin-left: auto;
     padding: 8px 15px;
-
-    &[type="primary"] {
-      background-color: #409eff;
-      border-color: #409eff;
-
-      &:hover {
-        background-color: #66b1ff;
-        border-color: #66b1ff;
-      }
-
-      &:disabled {
-        background-color: #a0cfff;
-        border-color: #a0cfff;
-        cursor: not-allowed;
-      }
-    }
-
-    &[type="text"] {
-      color: #409eff;
-      padding: 8px 5px;
-
-      &:hover {
-        color: #66b1ff;
-      }
-    }
   }
 }
 
-/* 分页样式 */
 .pagination-container {
   margin-top: 30px;
   display: flex;
   justify-content: center;
 }
 
-/* 动画效果 */
 @keyframes fadeIn {
   from {
     opacity: 0;
