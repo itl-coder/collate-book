@@ -1,7 +1,7 @@
 <template>
   <div class="question-container">
     <!-- 题目列表 -->
-    <div class="question-list">
+    <div class="question-list" v-for="question in questions">
       <div
         class="question-item"
         v-for="(question, index) in paginatedQuestions"
@@ -13,16 +13,16 @@
           >
           <el-tag
             size="small"
-            :type="getQuestionTypeTag(question.question_type)"
+            :type="getQuestionTypeTag(question.questionType)"
           >
-            {{ question.question_type }}
+            {{ question.questionType }}
           </el-tag>
         </div>
 
         <div class="question-content">
           <div
             class="content-text"
-            v-html="formatQuestionContent(question.question_content)"
+            v-html="formatQuestionContent(question.questionContent)"
           ></div>
         </div>
 
@@ -30,7 +30,7 @@
           <div class="answer-title">正确答案：</div>
           <div
             class="correct-answer"
-            v-html="formatAnswerContent(question.correct_answer)"
+            v-html="formatAnswerContent(question.correctAnswer)"
           ></div>
         </div>
 
@@ -38,11 +38,11 @@
           <div class="meta-info">
             <span class="meta-item">
               <i class="el-icon-collection"></i>
-              科目ID: {{ question.subject_id }}
+              科目ID: {{ question.subjectName }}
             </span>
-            <span class="meta-item" v-if="question.book_id">
+            <span class="meta-item" v-if="question.bookId">
               <i class="el-icon-notebook-2"></i>
-              教辅ID: {{ question.book_id }}
+              教辅ID: {{ question.bookName }}
             </span>
             <!-- 查看/隐藏答案按钮，放置在教辅ID后面 -->
             <div class="action-buttons">
@@ -207,72 +207,20 @@
 </style>
 
 <script>
+import {frontListQuestion} from "@/api/errorbook/question";
+
 export default {
   data() {
     return {
-      questions: [
-        // 题目数据...
-        {
-          id: 1,
-          question_content:
-            "1. 已知函数f(x) = x² + 2x + 1，求f(2)的值。\nA) 5\nB) 7\nC) 9\nD) 11",
-          question_type: "单选题",
-          correct_answer: "C) 9",
-          subject_id: 101,
-          book_id: 201,
-          create_time: "2023-05-10 14:30:00",
-          update_time: "2023-05-15 09:15:00",
-        },
-        {
-          id: 2,
-          question_content: "2. 简述牛顿第一定律的内容。",
-          question_type: "简答题",
-          correct_answer:
-            "牛顿第一定律，又称惯性定律，指出：任何物体都要保持匀速直线运动或静止状态，直到外力迫使它改变运动状态为止。",
-          subject_id: 102,
-          book_id: null,
-          create_time: "2023-05-12 10:20:00",
-          update_time: "2023-05-12 10:20:00",
-        },
-        // 更多题目...
-        {
-          id: 3,
-          question_content:
-            "3. 下列哪个不是操作系统？\nA) Windows\nB) Linux\nC) Photoshop\nD) macOS",
-          question_type: "单选题",
-          correct_answer: "C) Photoshop",
-          subject_id: 103,
-          book_id: 203,
-          create_time: "2023-05-13 11:30:00",
-          update_time: "2023-05-13 11:30:00",
-        },
-        {
-          id: 4,
-          question_content: "4. 什么是面向对象编程的三大特性？",
-          question_type: "简答题",
-          correct_answer: "封装、继承和多态",
-          subject_id: 104,
-          book_id: 204,
-          create_time: "2023-05-14 15:45:00",
-          update_time: "2023-05-14 15:45:00",
-        },
-        {
-          id: 5,
-          question_content:
-            "5. 下列哪些是JavaScript的基本数据类型？（多选）\nA) String\nB) Object\nC) Number\nD) Array\nE) Boolean",
-          question_type: "多选题",
-          correct_answer: "A) String\nC) Number\nE) Boolean",
-          subject_id: 105,
-          book_id: 205,
-          create_time: "2023-05-15 09:00:00",
-          update_time: "2023-05-15 09:00:00",
-        },
-      ],
+      questions: [ ],
       showAnswers: {}, // 控制答案显示状态
       currentPage: 1, // 当前页码
       pageSize: 3, // 每页显示数量
     };
   },
+  created() {
+  this.getFrontList()
+    },
   computed: {
     // 分页后的题目数据
     paginatedQuestions() {
@@ -282,6 +230,15 @@ export default {
     },
   },
   methods: {
+   async getFrontList(){
+      let query = {
+        pageSize: this.pageSize,
+        currentPage: this.currentPage
+      }
+     const res = await frontListQuestion(query)
+     console.log("getFrontList: ",res)
+     this.questions = res.data
+    },
     getQuestionTypeTag(type) {
       const typeMap = {
         单选题: "primary",
