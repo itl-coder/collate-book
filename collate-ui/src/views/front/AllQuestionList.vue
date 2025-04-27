@@ -38,6 +38,18 @@
           </div>
         </div>
 
+        <!-- 简答题输入框（仅针对简答题） -->
+        <div class="question-answer" v-if="question.questionType === '简答'">
+          <el-input
+            v-model="question.answerText"
+            type="textarea"
+            placeholder="请输入你的答案"
+            rows="4"
+            clearable
+            class="answer-input"
+          ></el-input>
+        </div>
+
         <!-- 提交按钮 & 查看答案 -->
         <div class="question-footer">
           <div class="meta-info">
@@ -98,6 +110,7 @@
   </div>
 </template>
 
+
 <script>
 import { frontListQuestion } from "@/api/errorbook/question";
 
@@ -127,6 +140,7 @@ export default {
         ...question,
         selectedOption: "", // 单选题选中项
         selectedOptions: [], // 多选题选中项
+        answerText:"", // 简答题
         isSubmitted: false, // 是否已提交
       }));
     },
@@ -137,6 +151,8 @@ export default {
         return question.selectedOption !== "";
       } else if (question.questionType === "多选") {
         return question.selectedOptions.length > 0;
+      } else if (question.questionType === "简答") {
+        return question.answerText.trim() !== ""; // 判断简答题是否有输入
       }
       return false;
     },
@@ -184,7 +200,6 @@ export default {
   },
 };
 </script>
-
 <style lang="scss" scoped>
 .question-container {
   max-width: 900px;
@@ -262,6 +277,32 @@ export default {
       font-size: 14px;
       color: #606266;
     }
+  }
+}
+
+/* 简答题输入框样式 */
+.question-answer {
+  margin-top: 15px;
+}
+
+.answer-input {
+  background-color: #f9f9f9;
+  border: 1px solid #e4e7ed;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 14px;
+  color: #333;
+  transition: border-color 0.3s ease;
+
+  &:focus-within {
+    border-color: #409eff;
+  }
+
+  .el-input__inner {
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.6;
   }
 }
 
