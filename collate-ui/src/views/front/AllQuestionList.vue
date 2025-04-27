@@ -1,37 +1,22 @@
 <template>
   <div class="question-container">
     <!-- 题目列表 -->
-    <div class="question-list" v-for="question in questions">
-      <div
-        class="question-item"
-        v-for="(question, index) in paginatedQuestions"
-        :key="question.id"
-      >
+    <div class="question-list" v-for="question in questions" :key="question.id">
+      <div class="question-item">
         <div class="question-header">
-          <span class="question-index"
-          >题目 {{ (currentPage - 1) * pageSize + index + 1 }}</span
-          >
-          <el-tag
-            size="small"
-            :type="getQuestionTypeTag(question.questionType)"
-          >
+          <span class="question-index">题目 {{ question.id }}</span>
+          <el-tag size="small" :type="getQuestionTypeTag(question.questionType)">
             {{ question.questionType }}
           </el-tag>
         </div>
 
         <div class="question-content">
-          <div
-            class="content-text"
-            v-html="formatQuestionContent(question.questionContent)"
-          ></div>
+          <div class="content-text" v-html="formatQuestionContent(question.questionContent)"></div>
         </div>
 
         <div class="answer-section" v-if="showAnswers[question.id]">
           <div class="answer-title">正确答案：</div>
-          <div
-            class="correct-answer"
-            v-html="formatAnswerContent(question.correctAnswer)"
-          ></div>
+          <div class="correct-answer" v-html="formatAnswerContent(question.correctAnswer)"></div>
         </div>
 
         <div class="question-footer">
@@ -46,12 +31,7 @@
             </span>
             <!-- 查看/隐藏答案按钮，放置在教辅ID后面 -->
             <div class="action-buttons">
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="查看/隐藏答案"
-                placement="top"
-              >
+              <el-tooltip class="item" effect="dark" content="查看/隐藏答案" placement="top">
                 <el-button
                   size="small"
                   @click="toggleAnswer(question.id)"
@@ -82,7 +62,6 @@
     </div>
   </div>
 </template>
-
 <style lang="scss" scoped>
 .question-container {
   max-width: 900px;
@@ -93,15 +72,15 @@
 .question-list {
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  min-height: 500px;
-  /* 保持高度避免页面跳动 */
+  gap: 15px;  /* 减少题目间的间距 */
+  min-height: 200px;
+  margin-top: 10px;
 }
 
 .question-item {
   background-color: #fff;
   border-radius: 8px;
-  padding: 20px;
+  padding: 15px; /* 减少 padding 值，减小上下间距 */
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   transition: all 0.3s;
 
@@ -114,8 +93,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
+  margin-bottom: 10px;  /* 减小上下间距 */
+  padding-bottom: 8px; /* 减少底部 padding */
   border-bottom: 1px dashed #ebeef5;
 
   .question-index {
@@ -126,8 +105,8 @@
 }
 
 .question-content {
-  margin-bottom: 15px;
-  padding: 15px;
+  margin-bottom: 10px; /* 减少下方的间距 */
+  padding: 12px;  /* 减少 padding */
   background-color: #f5f7fa;
   border-radius: 4px;
   line-height: 1.6;
@@ -138,15 +117,15 @@
 }
 
 .answer-section {
-  padding: 15px;
+  padding: 12px;  /* 减少 padding */
   background-color: #f0f9eb;
   border-radius: 4px;
-  margin-bottom: 15px;
+  margin-bottom: 12px; /* 减少 margin-bottom */
   animation: fadeIn 0.3s;
 
   .answer-title {
     font-weight: bold;
-    margin-bottom: 8px;
+    margin-bottom: 6px;  /* 减少底部 margin */
     color: #67c23a;
   }
 
@@ -168,7 +147,7 @@
 }
 
 .action-buttons {
-  margin-bottom: 15px;
+  margin-bottom: 12px;  /* 减少 bottom margin */
   text-align: center;
 
   .meta-info {
@@ -177,15 +156,16 @@
     gap: 15px;
   }
 }
+
 .question-footer {
   font-size: 12px;
   color: #909399;
 
   .meta-info {
     display: flex;
-    align-items: center; /* 保证所有元素垂直居中对齐 */
-    gap: 15px; /* 间隔 */
-    flex-wrap: wrap; /* 如果空间不足，允许换行 */
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
   }
 
   .meta-item {
@@ -195,7 +175,7 @@
   }
 
   .action-buttons {
-    margin-left: auto; /* 确保按钮靠右对齐 */
+    margin-left: auto;
   }
 }
 
@@ -205,6 +185,7 @@
   justify-content: center;
 }
 </style>
+
 
 <script>
 import {frontListQuestion} from "@/api/errorbook/question";
@@ -221,14 +202,6 @@ export default {
   created() {
   this.getFrontList()
     },
-  computed: {
-    // 分页后的题目数据
-    paginatedQuestions() {
-      const start = (this.currentPage - 1) * this.pageSize;
-      const end = start + this.pageSize;
-      return this.questions.slice(start, end);
-    },
-  },
   methods: {
    async getFrontList(){
       let query = {
@@ -254,9 +227,6 @@ export default {
     },
     formatAnswerContent(answer) {
       return `<span style="color: #67C23A; font-weight: 500">${answer}</span>`;
-    },
-    formatTime(time) {
-      return new Date(time).toLocaleString();
     },
     // 切换答案显示状态
     toggleAnswer(questionId) {
