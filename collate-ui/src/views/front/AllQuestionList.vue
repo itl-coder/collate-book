@@ -15,8 +15,8 @@
             <el-option
               v-for="subject in subjects"
               :key="subject.id"
-              :label="subject.name"
-              :value="subject.name"
+              :label="subject.subjectName"
+              :value="subject.subjectName"
             />
           </el-select>
         </el-menu-item>
@@ -152,12 +152,13 @@
 
 <script>
 import { frontListQuestion } from "@/api/errorbook/question";
+import {countListSubject} from "@/api/errorbook/subject";
 
 export default {
   data() {
     return {
       activeMenu: "2", // 设置默认激活的菜单项
-      subjects: [{"id":1,"name":"英语"},{"id":2,"name":"数学"}], // 科目列表
+      subjects: [], // 科目列表
       selectedSubject: "", // 用户选择的科目
       questions: [],
       showAnswers: {}, // 控制每道题是否展开答案
@@ -167,8 +168,13 @@ export default {
   },
   created() {
     this.getFrontList();
+    this.getCountSubject();
   },
   methods: {
+   async getCountSubject(){
+     const res = await countListSubject()
+     this.subjects = res.data
+    },
     // 是否为单选或多选题
     isChoiceQuestion(question) {
       return question.questionType === '单选' || question.questionType === '多选';

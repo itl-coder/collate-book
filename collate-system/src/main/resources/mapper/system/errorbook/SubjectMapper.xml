@@ -11,6 +11,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+    <resultMap type="Subject" id="CountSubjectResult">
+        <result property="id"    column="id"    />
+        <result property="subjectName"    column="subject_name"    />
+    </resultMap>
+
     <sql id="selectSubjectVo">
         select id, subject_name, create_time, update_time from subject
     </sql>
@@ -26,7 +31,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSubjectVo"/>
         where id = #{id}
     </select>
-        
+    <select id="countSubjectList" resultMap="CountSubjectResult">
+        select id,subject_name from subject
+    </select>
+
     <insert id="insertSubject" parameterType="Subject" useGeneratedKeys="true" keyProperty="id">
         insert into subject
         <trim prefix="(" suffix=")" suffixOverrides=",">

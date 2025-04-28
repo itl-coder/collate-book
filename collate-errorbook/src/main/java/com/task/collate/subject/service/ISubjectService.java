@@ -58,4 +58,6 @@ public interface ISubjectService
      * @return 结果
      */
     public int deleteSubjectById(Long id);
+
+    public List<Subject> countSubjectList();
 }

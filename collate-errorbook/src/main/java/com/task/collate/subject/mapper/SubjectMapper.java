@@ -58,4 +58,6 @@ public interface SubjectMapper
      * @return 结果
      */
     public int deleteSubjectByIds(Long[] ids);
+
+    public List<Subject> countSubjectList();
 }

@@ -42,3 +42,11 @@ export function delSubject(id) {
     method: 'delete'
   })
 }
+
+// 查询科目分类列表
+export function countListSubject() {
+  return request({
+    url: '/errorbook/subject/count/list',
+    method: 'get'
+  })
+}

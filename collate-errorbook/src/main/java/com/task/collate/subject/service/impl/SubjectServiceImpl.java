@@ -93,4 +93,9 @@ public class SubjectServiceImpl implements ISubjectService
     {
         return subjectMapper.deleteSubjectById(id);
     }
+
+    @Override
+    public List<Subject> countSubjectList() {
+        return subjectMapper.countSubjectList();
+    }
 }
