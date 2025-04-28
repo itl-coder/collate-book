@@ -1,5 +1,27 @@
 <template>
   <div class="question-container">
+    <!-- 顶部导航 -->
+    <!-- 顶部导航 -->
+    <el-menu :default-active="activeMenu" class="top-nav" mode="horizontal" @select="handleMenuSelect">
+      <div class="menu-content">
+        <!-- 左侧返回按钮 -->
+        <el-menu-item index="1" @click="goBack">
+          <i class="el-icon-arrow-left"></i> 返回
+        </el-menu-item>
+
+        <!-- 右侧科目选择 -->
+        <el-menu-item index="2" class="subject-select">
+          <el-select v-model="selectedSubject" placeholder="请选择科目" size="small" @change="handleSubjectChange">
+            <el-option
+              v-for="subject in subjects"
+              :key="subject.id"
+              :label="subject.name"
+              :value="subject.id"
+            />
+          </el-select>
+        </el-menu-item>
+      </div>
+    </el-menu>
     <!-- 题目列表 -->
     <div
       class="question-list"
@@ -134,6 +156,9 @@ import { frontListQuestion } from "@/api/errorbook/question";
 export default {
   data() {
     return {
+      activeMenu: "2", // 设置默认激活的菜单项
+      subjects: [], // 科目列表
+      selectedSubject: "", // 用户选择的科目
       questions: [],
       showAnswers: {}, // 控制每道题是否展开答案
       currentPage: 1,
@@ -272,7 +297,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .question-item {
@@ -414,4 +439,14 @@ export default {
     transform: translateY(0);
   }
 }
+.menu-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subject-select {
+  text-align: right;
+}
+
 </style>
