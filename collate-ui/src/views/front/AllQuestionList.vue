@@ -2,21 +2,21 @@
   <div class="question-container">
     <!-- 顶部导航 -->
     <!-- 顶部导航 -->
-    <el-menu :default-active="activeMenu" class="top-nav" mode="horizontal" @select="handleMenuSelect">
+    <el-menu :default-active="activeMenu" class="top-nav" mode="horizontal" >
       <div class="menu-content">
         <!-- 左侧返回按钮 -->
-        <el-menu-item index="1" @click="goBack">
+        <el-menu-item index="1" >
           <i class="el-icon-arrow-left"></i> 返回
         </el-menu-item>
 
         <!-- 右侧科目选择 -->
         <el-menu-item index="2" class="subject-select">
-          <el-select v-model="selectedSubject" placeholder="请选择科目" size="small" @change="handleSubjectChange">
+          <el-select v-model="selectedSubject" placeholder="请选择科目" size="small" @change="getFrontList">
             <el-option
               v-for="subject in subjects"
               :key="subject.id"
               :label="subject.name"
-              :value="subject.id"
+              :value="subject.name"
             />
           </el-select>
         </el-menu-item>
@@ -157,7 +157,7 @@ export default {
   data() {
     return {
       activeMenu: "2", // 设置默认激活的菜单项
-      subjects: [], // 科目列表
+      subjects: [{"id":1,"name":"英语"},{"id":2,"name":"数学"}], // 科目列表
       selectedSubject: "", // 用户选择的科目
       questions: [],
       showAnswers: {}, // 控制每道题是否展开答案
@@ -177,6 +177,7 @@ export default {
       const query = {
         pageSize: this.pageSize,
         currentPage: this.currentPage,
+        subjectName: this.selectedSubject
       };
       const res = await frontListQuestion(query);
       console.log("getFrontList: ", res);

@@ -62,5 +62,8 @@ public interface QuestionMapper
      */
     public int deleteQuestionByIds(Long[] ids);
 
-    List<QuestionFrontVO> selectFrontQuestionList(@Param("pageSize") Integer pageSize,@Param("currentPage") Integer currentPage);
+    List<QuestionFrontVO> selectFrontQuestionList(@Param("pageSize") Integer pageSize,
+                                                  @Param("currentPage") Integer currentPage,
+                                                  @Param("subjectName") String subjectName
+                                                  );
 }

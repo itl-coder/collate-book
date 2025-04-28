@@ -100,9 +100,10 @@ public class QuestionServiceImpl implements IQuestionService
     @Override
     public List<QuestionFrontVO> selectFrontQuestionList(
             Integer pageSize,
-           Integer currentPage
+           Integer currentPage,
+           String subjectName
     ) {
 
-        return questionMapper.selectFrontQuestionList(pageSize,currentPage);
+        return questionMapper.selectFrontQuestionList(pageSize,currentPage,subjectName);
     }
 }

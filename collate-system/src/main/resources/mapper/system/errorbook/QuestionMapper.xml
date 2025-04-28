@@ -134,12 +134,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 JOIN SUBJECT s ON q.subject_id = s.id
                 JOIN book b ON q.book_id = b.id
                 LEFT JOIN OPTIONS o ON q.id = o.question_id
-        WHERE
-            (o.option_label IS NOT NULL AND o.option_label != '')
-           OR q.question_type NOT IN ('单选', '多选')  -- 确保 'OR' 逻辑放置在正确的位置
-        ORDER BY
-            q.id ASC, o.option_label ASC
+        <where>
+            <if test="subjectName!=null and subjectName!='' ">
+                 subject_name = #{subjectName}
+            </if>
 
+        </where>
+        ORDER BY
+        q.id ASC, o.option_label ASC
     </select>
 
 

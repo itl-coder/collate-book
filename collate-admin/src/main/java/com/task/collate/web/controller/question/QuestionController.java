@@ -53,12 +53,13 @@ public class QuestionController extends BaseController
     @GetMapping("/front/list")
     public AjaxResult frontList(
             @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(defaultValue = "1") Integer currentPage
+            @RequestParam(defaultValue = "1") Integer currentPage,
+            @RequestParam(required = false) String subjectName
     )
     {
         PageHelper.startPage(currentPage, pageSize);
 
-        List<QuestionFrontVO> list  = questionService.selectFrontQuestionList(pageSize,currentPage);
+        List<QuestionFrontVO> list  = questionService.selectFrontQuestionList(pageSize,currentPage,subjectName);
         PageInfo<QuestionFrontVO> questionFrontVOPageInfo = new PageInfo<>(list);
         return success(questionFrontVOPageInfo);
     }
