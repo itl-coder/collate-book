@@ -4,6 +4,7 @@ import java.util.List;
 import com.task.collate.question.domain.Question;
 import com.task.collate.question.domain.vo.QuestionFrontVO;
 import com.task.collate.question.domain.vo.QuestionVO;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 题目管理Mapper接口
@@ -61,5 +62,5 @@ public interface QuestionMapper
      */
     public int deleteQuestionByIds(Long[] ids);
 
-    List<QuestionFrontVO> selectFrontQuestionList(Integer pageSize, Integer currentPage);
+    List<QuestionFrontVO> selectFrontQuestionList(@Param("pageSize") Integer pageSize,@Param("currentPage") Integer currentPage);
 }

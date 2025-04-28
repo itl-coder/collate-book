@@ -114,7 +114,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 一对多的sql -->
     <select id="selectFrontQuestionList" parameterType="integer" resultMap="quesFrontResult">
-        ### SQL:
         SELECT
             q.id AS question_id,
             q.question_content,
@@ -135,11 +134,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 JOIN SUBJECT s ON q.subject_id = s.id
                 JOIN book b ON q.book_id = b.id
                 LEFT JOIN OPTIONS o ON q.id = o.question_id
-        where    o.option_label IS NOT NULL
-          AND o.option_label != ''  or question_type not in ('单选','多选')
+        WHERE
+            (o.option_label IS NOT NULL AND o.option_label != '')
+           OR q.question_type NOT IN ('单选', '多选')  -- 确保 'OR' 逻辑放置在正确的位置
         ORDER BY
-            q.id ASC,
-            o.option_label ASC
+            q.id ASC, o.option_label ASC
+
     </select>
 
 

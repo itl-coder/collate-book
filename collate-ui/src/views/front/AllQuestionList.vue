@@ -137,7 +137,7 @@ export default {
       questions: [],
       showAnswers: {}, // 控制每道题是否展开答案
       currentPage: 1,
-      pageSize: 2,
+      pageSize: 10,
     };
   },
   created() {
