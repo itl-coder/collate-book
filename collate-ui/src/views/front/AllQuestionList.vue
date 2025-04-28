@@ -448,5 +448,13 @@ export default {
 .subject-select {
   text-align: right;
 }
+/* 重置 el-menu-item 在 hover 和 focus 状态下的样式 */
+.el-menu-item:hover,
+.el-menu-item:focus {
+  background-color: transparent !important; /* 去除背景色 */
+  color: inherit !important; /* 保持文本颜色不变 */
+  border: none !important; /* 去除边框 */
+  box-shadow: none !important; /* 去除阴影 */
+}
 
 </style>
