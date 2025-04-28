@@ -5,7 +5,7 @@
     <el-menu :default-active="activeMenu" class="top-nav" mode="horizontal" >
       <div class="menu-content">
         <!-- 左侧返回按钮 -->
-        <el-menu-item index="1" >
+        <el-menu-item index="1" @click="goBack" >
           <i class="el-icon-arrow-left"></i> 返回
         </el-menu-item>
 
@@ -171,6 +171,9 @@ export default {
     this.getCountSubject();
   },
   methods: {
+    goBack(){
+      this.$router.back()
+    },
    async getCountSubject(){
      const res = await countListSubject()
      this.subjects = res.data
