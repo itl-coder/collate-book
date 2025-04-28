@@ -2,6 +2,7 @@ package com.task.collate.book.service;
 
 import java.util.List;
 import com.task.collate.book.domain.Book;
+import com.task.collate.common.core.domain.AjaxResult;
 
 /**
  * 教辅分类Service接口
@@ -58,4 +59,6 @@ public interface IBookService
      * @return 结果
      */
     public int deleteBookById(Long id);
+
+    public  List<Book>    selectCountBookList();
 }

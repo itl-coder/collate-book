@@ -1,5 +1,6 @@
 package com.task.collate.book.service.impl;
 
+import com.task.collate.common.core.domain.AjaxResult;
 import com.task.collate.common.utils.DateUtils;
 import com.task.collate.book.domain.Book;
 import com.task.collate.book.mapper.BookMapper;
@@ -86,5 +87,10 @@ public class BookServiceImpl implements IBookService {
     @Override
     public int deleteBookById(Long id) {
         return bookMapper.deleteBookById(id);
+    }
+
+    @Override
+    public  List<Book> selectCountBookList() {
+        return bookMapper.selectCountBookList();
     }
 }

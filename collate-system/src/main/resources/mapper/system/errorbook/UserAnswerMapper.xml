@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.task.collate.answer.mapper.UserAnswerMapper">
+    
+    <resultMap type="UserAnswer" id="UserAnswerResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="subjectId"    column="subject_id"    />
+        <result property="answer"    column="answer"    />
+        <result property="isCorrect"    column="is_correct"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="score"    column="score"    />
+        <result property="tagId"    column="tag_id"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="addCollate"    column="add_collate"    />
+    </resultMap>
+
+    <resultMap type="UserAnswerVO" id="UserAnswerFrontResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="answer" column="answer" />
+        <result property="isCorrect"    column="is_correct"    />
+        <result property="subjectId"    column="subject_id"    />
+        <result property="answer"    column="answer"    />
+        <result property="score"    column="score"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="tagId"    column="tag_id"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="addCollate"    column="add_collate"    />
+        <result property="subjectName" column="subject_name" />
+        <result property="bookName" column="book_name" />
+        <result property="tagName" column="tag_name" />
+        <result property="correctAnswer" column="correct_answer" />
+        <result property="questionContent" column="question_content" />
+    </resultMap>
+    <!--  TODO:  用户错题本数据  -->
+    <select id="selectFrontUserAnswerList" resultMap="UserAnswerFrontResult">
+        select
+            ua.id,
+            ua.user_id,
+            ua.question_id,
+            answer,
+            ua.is_correct,
+            score,
+            ua.tag_id,
+            tag_name,
+            question_content,
+            correct_answer,
+            book_id,
+            book_name,
+            subject_name,
+            add_collate
+        from user_answer ua
+                 join question q on ua.question_id = q.id
+                 join `subject` s on s.id = q.subject_id
+                 join tag on ua.tag_id=tag.id
+                 join sys_user su on ua.user_id=su.user_id
+                 join book b on b.id = q.book_id
+        <where>
+            add_collate = 1
+            <if test="subjectName!=null and subjectName!=''">
+                and subject_name=#{subjectName}
+            </if>
+            <if test="userId!=null and userId!=''">
+                and ua.user_id=#{userId}
+            </if>
+        </where> order by sort_order desc;
+    </select>
+
+
+    <sql id="selectUserAnswerVo">
+        select id, user_id, question_id, subject_id, answer, is_correct, create_time, update_time, score, tag_id, sort_order, add_collate from user_answer
+    </sql>
+
+    <select id="selectUserAnswerList" parameterType="UserAnswer" resultMap="UserAnswerResult">
+        <include refid="selectUserAnswerVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="questionId != null "> and question_id = #{questionId}</if>
+            <if test="subjectId != null "> and subject_id = #{subjectId}</if>
+            <if test="answer != null  and answer != ''"> and answer = #{answer}</if>
+            <if test="isCorrect != null  and isCorrect != ''"> and is_correct = #{isCorrect}</if>
+            <if test="score != null "> and score = #{score}</if>
+            <if test="tagId != null "> and tag_id = #{tagId}</if>
+            <if test="sortOrder != null "> and sort_order = #{sortOrder}</if>
+            <if test="addCollate != null "> and add_collate = #{addCollate}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserAnswerById" parameterType="Long" resultMap="UserAnswerResult">
+        <include refid="selectUserAnswerVo"/>
+        where id = #{id}
+    </select>
+
+
+    <insert id="insertUserAnswer" parameterType="UserAnswer" useGeneratedKeys="true" keyProperty="id">
+        insert into user_answer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="questionId != null">question_id,</if>
+            <if test="subjectId != null">subject_id,</if>
+            <if test="answer != null and answer != ''">answer,</if>
+            <if test="isCorrect != null and isCorrect != ''">is_correct,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="score != null">score,</if>
+            <if test="tagId != null">tag_id,</if>
+            <if test="sortOrder != null">sort_order,</if>
+            <if test="addCollate != null">add_collate,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="questionId != null">#{questionId},</if>
+            <if test="subjectId != null">#{subjectId},</if>
+            <if test="answer != null and answer != ''">#{answer},</if>
+            <if test="isCorrect != null and isCorrect != ''">#{isCorrect},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="score != null">#{score},</if>
+            <if test="tagId != null">#{tagId},</if>
+            <if test="sortOrder != null">#{sortOrder},</if>
+            <if test="addCollate != null">#{addCollate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserAnswer" parameterType="UserAnswer">
+        update user_answer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="questionId != null">question_id = #{questionId},</if>
+            <if test="subjectId != null">subject_id = #{subjectId},</if>
+            <if test="answer != null and answer != ''">answer = #{answer},</if>
+            <if test="isCorrect != null and isCorrect != ''">is_correct = #{isCorrect},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="tagId != null">tag_id = #{tagId},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="addCollate != null">add_collate = #{addCollate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserAnswerById" parameterType="Long">
+        delete from user_answer where id = #{id}
+    </delete>
+
+    <delete id="deleteUserAnswerByIds" parameterType="String">
+        delete from user_answer where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

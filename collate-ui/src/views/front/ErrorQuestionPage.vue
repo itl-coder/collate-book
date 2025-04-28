@@ -74,21 +74,20 @@
               </div>
 
               <!-- 错题卡片列表 -->
-              <div class="card-list">
+              <div class="card-list" >
                 <el-row :gutter="20">
                   <el-col
                     :xs="24"
                     :sm="12"
-                    v-for="(item, index) in paginatedData"
-                    :key="index"
+                    v-for="collate in collateList" :key="collate.id"
                   >
                     <el-card
                       shadow="always"
                       class="question-card"
-                      :class="{ 'has-image': item.image }"
+                      :class="{ 'has-image': collate.image }"
                     >
                       <!-- 题目图片展示 -->
-                      <div class="question-image" v-if="item.image">
+                      <div class="question-image" v-if="collate.image">
                         <el-image
                           :src="item.image"
                           fit="cover"
@@ -99,13 +98,14 @@
 
                       <div class="question-title">题目：</div>
                       <div class="question-content">
-                        {{ item.question_content }}
+                        {{ collate.questionContent }}
                       </div>
 
                       <div class="answer-block">
                         <span class="label">我的答案：</span>
-                        <span class="wrong-answer" :title="item.wrong_answer">{{
-                          truncateText(item.wrong_answer)
+                      <!-- 错误答案 -->
+                        <span class="wrong-answer" :title="collate.answer">{{
+                          truncateText(collate.answer)
                         }}</span>
                       </div>
 
@@ -113,39 +113,39 @@
                         <span class="label">正确答案：</span>
                         <span
                           class="correct-answer"
-                          :title="item.correct_answer"
-                          >{{ truncateText(item.correct_answer) }}</span
+                          :title="collate.correctAnswer"
+                          >{{ truncateText(collate.correctAnswer) }}</span
                         >
                       </div>
 
                       <div class="card-footer">
                         <el-dropdown
                           trigger="click"
-                          @command="handleImportanceChange(item, $event)"
+                          @command="handleImportanceChange(collate, $event)"
                         >
                           <el-tag
-                            :type="tagType(item.importance_level)"
+                            :type="tagType(collate.tagId)"
                             size="small"
                             class="importance-tag"
-                            :class="'level-' + item.importance_level"
+                            :class="'level-' + collate.tagId"
                           >
                             <i class="el-icon-warning"></i>
-                            {{ getImportanceText(item.importance_level) }}
+                            {{ getImportanceText(collate.tagId) }}
                             <i class="el-icon-arrow-down el-icon--right"></i>
                           </el-tag>
                           <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item
                               command="1"
                               :class="{
-                                'is-selected': item.importance_level === 1,
+                                'is-selected': collate.tagId === 1,
                               }"
                             >
-                              <i class="el-icon-info"></i> 一般
+                              <i class="el-icon-info"></i> {{collate.tagName}}
                             </el-dropdown-item>
                             <el-dropdown-item
                               command="2"
                               :class="{
-                                'is-selected': item.importance_level === 2,
+                                'is-selected': collate.tagId === 2,
                               }"
                             >
                               <i class="el-icon-warning"></i> 重要
@@ -153,7 +153,7 @@
                             <el-dropdown-item
                               command="3"
                               :class="{
-                                'is-selected': item.importance_level === 3,
+                                'is-selected': collate.tagId === 3,
                               }"
                             >
                               <i class="el-icon-error"></i> 非常重要
@@ -165,7 +165,7 @@
                           <el-button
                             type="text"
                             size="small"
-                            @click="showDetail(item)"
+                            @click="showDetail(collate)"
                             class="detail-btn"
                           >
                             <i class="el-icon-view"></i> 详情
@@ -173,7 +173,7 @@
                           <el-button
                             type="text"
                             size="small"
-                            @click="viewNote(item)"
+                            @click="viewNote(collate)"
                             class="note-btn"
                           >
                             <i class="el-icon-document"></i> 笔记
@@ -181,7 +181,7 @@
                           <el-button
                             type="text"
                             size="small"
-                            @click="editItem(item)"
+                            @click="editItem(collate)"
                             class="edit-btn"
                           >
                             <i class="el-icon-edit"></i> 编辑
@@ -216,7 +216,6 @@
               </div>
             </el-card>
           </el-main>
-          <!-- TODO: 侧边栏 -->
         </el-container>
 
         <!-- 详情弹窗 -->
@@ -392,10 +391,12 @@
 
 <script>
 import {getSwipperList} from "@/api/carousel/swipper";
+import {frontListAnswer} from "@/api/errorbook/answer";
 
 export default {
   data() {
     return {
+      collateList: [],
       swipperList:[],
       search: "",
       tableData: [],
@@ -425,6 +426,15 @@ export default {
     },
   },
   methods: {
+   async getCollateData(){
+     let query = {
+        userId:1,
+        subjectName:''
+     }
+      const res=  await frontListAnswer(query)
+      console.log("getCollateData res: ",res)
+      this.collateList = res.data
+    },
     goToQuestion(){
       this.$router.push("/question")
     },
@@ -558,6 +568,7 @@ export default {
     this.fetchSwipperData();
 
     this.fetchData();
+    this.getCollateData();
     this.checkIsMobile();
     window.addEventListener("resize", this.checkIsMobile);
   },

@@ -15,6 +15,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+    <resultMap type="Question" id="quesCountFrontResult">
+        <result property="id"    column="id"    />
+        <result property="questionContent"    column="question_content"    />
+        <result property="correctAnswer"    column="correct_answer"    />
+    </resultMap>
+
     <!-- 多表联查的映射 -->
     <resultMap type="QuestionVO" id="MultQuestionResult">
         <result property="id" column="id" />
@@ -142,6 +148,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         ORDER BY
         q.id ASC, o.option_label ASC
+    </select>
+    <select id="selectCountFrontQuestionList" resultMap="quesCountFrontResult">
+        select id,question_content,correct_answer from question
     </select>
 
 

@@ -56,3 +56,12 @@ export function frontListQuestion(query) {
     }
   })
 }
+
+
+// 查询题目管理列表
+export function countFrontListQuestion() {
+  return request({
+    url: '/errorbook/question/front/count/list',
+    method: 'get',
+  })
+}

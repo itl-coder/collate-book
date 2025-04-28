@@ -42,3 +42,10 @@ export function delBook(id) {
     method: 'delete'
   })
 }
+// 查询教辅分类列表
+export function countListBook() {
+  return request({
+    url: '/errorbook/book/count/list',
+    method: 'get',
+  })
+}

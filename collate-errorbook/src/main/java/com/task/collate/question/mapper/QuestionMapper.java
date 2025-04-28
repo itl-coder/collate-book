@@ -66,4 +66,6 @@ public interface QuestionMapper
                                                   @Param("currentPage") Integer currentPage,
                                                   @Param("subjectName") String subjectName
                                                   );
+
+   public List<Question> selectCountFrontQuestionList();
 }

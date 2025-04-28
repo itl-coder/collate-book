@@ -38,7 +38,15 @@ public class BookController extends BaseController {
         List<Book> list = bookService.selectBookList(book);
         return getDataTable(list);
     }
-
+    /**
+     * 查询教辅分类列表
+     */
+    @PreAuthorize("@ss.hasPermi('errorbook:book:list')")
+    @GetMapping("/count/list")
+    public AjaxResult countBookList() {
+       List<Book>  bookList = bookService.selectCountBookList();
+        return success(bookList) ;
+    }
     /**
      * 导出教辅分类列表
      */

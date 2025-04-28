@@ -46,9 +46,7 @@ public class QuestionController extends BaseController
         return getDataTable(list);
     }
 
-    /**
-    * TODO: 前台题目展示（未实现）
-    */
+
     @PreAuthorize("@ss.hasPermi('errorbook:question:list')")
     @GetMapping("/front/list")
     public AjaxResult frontList(
@@ -64,7 +62,12 @@ public class QuestionController extends BaseController
         return success(questionFrontVOPageInfo);
     }
 
-
+    @PreAuthorize("@ss.hasPermi('errorbook:question:list')")
+    @GetMapping("/front/count/list")
+    public AjaxResult countFrontList(){
+      List<Question> list=  questionService.selectCountQuestion();
+        return success(list);
+    }
     /**
      * 导出题目管理列表
      */

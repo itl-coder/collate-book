@@ -170,12 +170,43 @@
             placeholder="请输入内容"
           />
         </el-form-item>
-        <el-form-item label="所属科目ID" prop="subjectId">
-          <el-input v-model="form.subjectId" placeholder="请输入所属科目ID" />
+<!--        <el-form-item label="所属科目ID" prop="subjectId">-->
+<!--          <el-input v-model="form.subjectId" placeholder="请输入所属科目ID" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="所属教辅ID " prop="bookId">-->
+<!--          <el-input v-model="form.bookId" placeholder="请输入所属教辅ID " />-->
+<!--        </el-form-item>-->
+        <el-form-item label="所属科目" prop="subjectId">
+          <el-select v-model="form.subjectId" placeholder="请选择所属科目">
+            <el-option
+              v-for="subject in subjects"
+              :key="subject.id"
+              :label="subject.subjectName"
+              :value="subject.id"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="所属教辅ID " prop="bookId">
-          <el-input v-model="form.bookId" placeholder="请输入所属教辅ID " />
+        <el-form-item label="题目类型" prop="questionType">
+          <el-select v-model="form.questionType" placeholder="请选择题目类型">
+            <el-option
+              v-for="type in types"
+              :key="type.id"
+              :label="type.typeName"
+              :value="type.typeName"
+            />
+          </el-select>
         </el-form-item>
+        <el-form-item label="所属教辅" prop="bookId">
+          <el-select v-model="form.bookId" placeholder="请选择所属教辅">
+            <el-option
+              v-for="book in books"
+              :key="book.id"
+              :label="book.bookName"
+              :value="book.id"
+            />
+          </el-select>
+        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -194,10 +225,21 @@ import {
   updateQuestion,
 } from "@/api/errorbook/question";
 
+import {countListSubject} from "@/api/errorbook/subject";
+import {countListBook} from "@/api/errorbook/book";
+
 export default {
   name: "Question",
   data() {
     return {
+      types:[
+        {id:1,typeName:"简答"},
+        {id:2,typeName:"单选"},
+        {id:3,typeName:"多选"},
+        {id:4,typeName:"判断"},
+      ],
+      books:[],
+      subjects: [], // 科目列表
       // 查看详情对话框
       detailVisible: false,
       detailContent: "",
@@ -252,6 +294,14 @@ export default {
     this.getList();
   },
   methods: {
+    async getCountBook(){
+      const res = await countListBook()
+      this.books = res.data
+    },
+    async getCountSubject(){
+      const res = await countListSubject()
+      this.subjects = res.data
+    },
     /** 查看详情操作 */
     handleViewDetail(row) {
       this.detailContent = row.questionContent;
@@ -308,9 +358,13 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加题目管理";
+      this.getCountSubject()
+      this.getCountBook()
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.getCountSubject()
+      this.getCountBook()
       this.reset();
       const id = row.id || this.ids;
       getQuestion(id).then((response) => {
@@ -330,6 +384,7 @@ export default {
               this.getList();
             });
           } else {
+            console.log("this.form: ",this.form)
             addQuestion(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;

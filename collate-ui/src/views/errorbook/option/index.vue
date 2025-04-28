@@ -1,52 +1,5 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="外键，关联题目表 (questions)，用于标识这个选项属于哪道题" prop="questionId">
-        <el-input
-          v-model="queryParams.questionId"
-          placeholder="请输入外键，关联题目表 (questions)，用于标识这个选项属于哪道题"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="选项标识符，如：A、B、C、D" prop="optionLabel">
-        <el-input
-          v-model="queryParams.optionLabel"
-          placeholder="请输入选项标识符，如：A、B、C、D"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="是否为正确答案，布尔值，表示该选项是否正确" prop="isCorrect">
-        <el-input
-          v-model="queryParams.isCorrect"
-          placeholder="请输入是否为正确答案，布尔值，表示该选项是否正确"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="记录创建时间，自动生成" prop="createdAt">
-        <el-date-picker clearable
-          v-model="queryParams.createdAt"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择记录创建时间，自动生成">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="记录更新时间，每次更新时自动生成" prop="updatedAt">
-        <el-date-picker clearable
-          v-model="queryParams.updatedAt"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择记录更新时间，每次更新时自动生成">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -95,21 +48,9 @@
 
     <el-table v-loading="loading" :data="optionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="选项的唯一标识符，主键，用于唯一标识每个选项" align="center" prop="id" />
-      <el-table-column label="外键，关联题目表 (questions)，用于标识这个选项属于哪道题" align="center" prop="questionId" />
       <el-table-column label="选项标识符，如：A、B、C、D" align="center" prop="optionLabel" />
-      <el-table-column label="选项内容，表示题目中的具体选项内容" align="center" prop="content" />
-      <el-table-column label="是否为正确答案，布尔值，表示该选项是否正确" align="center" prop="isCorrect" />
-      <el-table-column label="记录创建时间，自动生成" align="center" prop="createdAt" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createdAt, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="记录更新时间，每次更新时自动生成" align="center" prop="updatedAt" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.updatedAt, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="选项内容" align="center" prop="content" />
+      <el-table-column label="是否为正确答案" align="center" prop="isCorrect" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -129,7 +70,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -139,35 +80,29 @@
     />
 
     <!-- 添加或修改选项，用于存储每道题的选项及其是否为正确答案对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="外键，关联题目表 (questions)，用于标识这个选项属于哪道题" prop="questionId">
-          <el-input v-model="form.questionId" placeholder="请输入外键，关联题目表 (questions)，用于标识这个选项属于哪道题" />
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="180px">
+        <el-form-item label="题目内容" prop="questionId">
+          <el-select v-model="form.questionId" placeholder="请选择要添加的题目">
+            <el-option
+              v-for="question in questionList"
+              :key="question.id"
+              :label="question.questionContent"
+              :value="question.id"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="选项标识符，如：A、B、C、D" prop="optionLabel">
+        <el-form-item label="选项标识符" prop="optionLabel">
           <el-input v-model="form.optionLabel" placeholder="请输入选项标识符，如：A、B、C、D" />
         </el-form-item>
-        <el-form-item label="选项内容，表示题目中的具体选项内容">
+        <el-form-item label="选项内容">
           <editor v-model="form.content" :min-height="192"/>
         </el-form-item>
-        <el-form-item label="是否为正确答案，布尔值，表示该选项是否正确" prop="isCorrect">
-          <el-input v-model="form.isCorrect" placeholder="请输入是否为正确答案，布尔值，表示该选项是否正确" />
-        </el-form-item>
-        <el-form-item label="记录创建时间，自动生成" prop="createdAt">
-          <el-date-picker clearable
-            v-model="form.createdAt"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择记录创建时间，自动生成">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="记录更新时间，每次更新时自动生成" prop="updatedAt">
-          <el-date-picker clearable
-            v-model="form.updatedAt"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择记录更新时间，每次更新时自动生成">
-          </el-date-picker>
+        <el-form-item label="是否为正确答案" prop="isCorrect">
+          <el-select v-model="form.isCorrect" placeholder="请选择是否为正确答案">
+            <el-option label="是" :value="1" />
+            <el-option label="否" :value="0" />
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -180,6 +115,7 @@
 
 <script>
 import { listOption, getOption, delOption, addOption, updateOption } from "@/api/errorbook/option";
+import {countFrontListQuestion} from "@/api/errorbook/question";
 
 export default {
   name: "Option",
@@ -216,6 +152,7 @@ export default {
       },
       // 表单参数
       form: {},
+      questionList:[],
       // 表单校验
       rules: {
         questionId: [
@@ -237,6 +174,12 @@ export default {
     this.getList();
   },
   methods: {
+   async getCountQuestionList(){
+     const res = await countFrontListQuestion()
+     console.log("getCountQuestionList: ",res)
+     this.questionList = res.data
+
+    },
     /** 查询选项，用于存储每道题的选项及其是否为正确答案列表 */
     getList() {
       this.loading = true;
@@ -282,9 +225,10 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      this.getCountQuestionList()
       this.reset();
       this.open = true;
-      this.title = "添加选项，用于存储每道题的选项及其是否为正确答案";
+      this.title = "添加选项";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -293,7 +237,7 @@ export default {
       getOption(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改选项，用于存储每道题的选项及其是否为正确答案";
+        this.title = "修改选项";
       });
     },
     /** 提交按钮 */
@@ -335,3 +279,11 @@ export default {
   }
 };
 </script>
+
+
+<style lang="scss" scoped>
+.el-input--medium .el-input__inner{
+  width: 600px !important;
+}
+
+</style>

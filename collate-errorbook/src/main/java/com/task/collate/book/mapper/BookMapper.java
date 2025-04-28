@@ -2,6 +2,7 @@ package com.task.collate.book.mapper;
 
 
 import com.task.collate.book.domain.Book;
+import com.task.collate.common.core.domain.AjaxResult;
 
 import java.util.List;
 
@@ -59,4 +60,6 @@ public interface BookMapper {
      * @return 结果
      */
     public int deleteBookByIds(Long[] ids);
+
+    public List<Book> selectCountBookList();
 }

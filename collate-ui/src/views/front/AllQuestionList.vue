@@ -32,9 +32,20 @@
       <div class="question-item">
         <div class="question-header">
           <span class="question-index">题目 {{ question.id }}</span>
-          <el-tag size="small" :type="getQuestionTypeTag(question.questionType)">
-            {{ question.questionType }}
-          </el-tag>
+         <div>
+           <el-tag size="small" :type="getQuestionTypeTag(question.questionType)">
+             {{ question.questionType }}
+           </el-tag>
+           <el-tag
+             v-if="question.isSubmitted"
+             class="add-bk"
+             size="small"
+             type="warning"
+             @click="addCollateBook(question)"
+           >
+             加入错题本
+           </el-tag>
+         </div>
         </div>
 
         <!-- 题目内容 -->
@@ -153,6 +164,7 @@
 <script>
 import { frontListQuestion } from "@/api/errorbook/question";
 import {countListSubject} from "@/api/errorbook/subject";
+import {addAnswer} from "@/api/errorbook/answer";
 
 export default {
   data() {
@@ -171,6 +183,25 @@ export default {
     this.getCountSubject();
   },
   methods: {
+    // 加入错题本
+   async addCollateBook(question){
+      console.log("addCollateBook: ",question)
+      let loginUserId= this.$store.state.user.id
+      let query = {
+          userId: loginUserId, // 登录用户id
+          questionId: question.id, // 题目id
+          subjectId: question.subjectId, //
+          answer: question.userAnswer[0], // 用户作答
+          isCorrect: question.correctAnswer, // 提供的正确答案
+          addCollate: 1, // 点击加入就改为1
+          sortOrder: 1 // 默认权重
+      }
+    const res= await  addAnswer(query)
+     console.log("addCollateBook res: ",res)
+     if(res.code===200){
+       this.$message.success(res.msg)
+     }
+    },
     goBack(){
       this.$router.back()
     },
@@ -466,5 +497,8 @@ export default {
   border: none !important; /* 去除边框 */
   box-shadow: none !important; /* 去除阴影 */
 }
-
+.add-bk{
+  margin-left: 10px;
+  cursor: pointer;
+}
 </style>

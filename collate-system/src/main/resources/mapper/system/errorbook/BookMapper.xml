@@ -12,6 +12,12 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
+    <resultMap type="Book" id="countBookList">
+        <result property="id" column="id"/>
+        <result property="bookName" column="book_name"/>
+        <result property="subjectId" column="subject_id"/>
+    </resultMap>
+
     <sql id="selectBookVo">
         select id, book_name, subject_id, create_time, update_time
         from book
@@ -28,6 +34,9 @@
     <select id="selectBookById" parameterType="Long" resultMap="BookResult">
         <include refid="selectBookVo"/>
         where id = #{id}
+    </select>
+    <select id="selectCountBookList" resultMap="countBookList">
+        select id,subject_id,book_name from book
     </select>
 
     <insert id="insertBook" parameterType="Book" useGeneratedKeys="true" keyProperty="id">

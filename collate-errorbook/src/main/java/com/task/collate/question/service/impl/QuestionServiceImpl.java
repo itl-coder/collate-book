@@ -106,4 +106,9 @@ public class QuestionServiceImpl implements IQuestionService
 
         return questionMapper.selectFrontQuestionList(pageSize,currentPage,subjectName);
     }
+
+    @Override
+    public List<Question> selectCountQuestion() {
+        return questionMapper.selectCountFrontQuestionList();
+    }
 }
