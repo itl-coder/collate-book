@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.task.collate.common.utils.StringUtils;
 import com.task.collate.question.domain.vo.QuestionFrontVO;
 import com.task.collate.question.domain.vo.QuestionVO;
@@ -54,9 +56,11 @@ public class QuestionController extends BaseController
             @RequestParam(defaultValue = "1") Integer currentPage
     )
     {
-        startPage();
-        List<QuestionFrontVO> list   = questionService.selectFrontQuestionList(pageSize,currentPage);
-        return success(list);
+        PageHelper.startPage(currentPage, pageSize);
+
+        List<QuestionFrontVO> list  = questionService.selectFrontQuestionList(pageSize,currentPage);
+        PageInfo<QuestionFrontVO> questionFrontVOPageInfo = new PageInfo<>(list);
+        return success(questionFrontVOPageInfo);
     }
 
 

@@ -162,7 +162,7 @@ export default {
       questions: [],
       showAnswers: {}, // 控制每道题是否展开答案
       currentPage: 1,
-      pageSize: 10,
+      pageSize: 20,
     };
   },
   created() {
@@ -181,7 +181,7 @@ export default {
       const res = await frontListQuestion(query);
       console.log("getFrontList: ", res);
 
-      this.questions = res.data.map(question => ({
+      this.questions = res.data.list.map(question => ({
         ...question,
         selectedOption: "",
         selectedOptions: [],
