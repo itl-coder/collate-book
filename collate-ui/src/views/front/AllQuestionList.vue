@@ -1,7 +1,12 @@
 <template>
   <div class="question-container">
     <!-- 题目列表 -->
-    <div class="question-list" v-for="question in questions" :key="question.id">
+    <div
+      class="question-list"
+      v-for="question in questions"
+      :key="question.id"
+      v-if="!(isChoiceQuestion(question) && (!question.options || question.options.length === 0))"
+    >
       <div class="question-item">
         <div class="question-header">
           <span class="question-index">题目 {{ question.id }}</span>
@@ -40,6 +45,14 @@
               {{ option.optionLabel }}.{{ option.content }}
             </el-radio>
           </div>
+        </div>
+
+        <!-- 判断题部分：True/False 选项 -->
+        <div class="question-options" v-if="question.questionType === '判断'">
+          <el-radio-group v-model="question.selectedOption" :disabled="question.isSubmitted">
+            <el-radio :label="'True'">正确</el-radio>
+            <el-radio :label="'False'">错误</el-radio>
+          </el-radio-group>
         </div>
 
         <!-- 简答题输入框 -->
@@ -114,6 +127,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { frontListQuestion } from "@/api/errorbook/question";
 
@@ -123,13 +137,17 @@ export default {
       questions: [],
       showAnswers: {}, // 控制每道题是否展开答案
       currentPage: 1,
-      pageSize: 3,
+      pageSize: 2,
     };
   },
   created() {
     this.getFrontList();
   },
   methods: {
+    // 是否为单选或多选题
+    isChoiceQuestion(question) {
+      return question.questionType === '单选' || question.questionType === '多选';
+    },
     async getFrontList() {
       const query = {
         pageSize: this.pageSize,
@@ -155,6 +173,8 @@ export default {
         return question.selectedOptions.length > 0;
       } else if (question.questionType === "简答") {
         return question.answerText.trim() !== "";
+      } else if (question.questionType === "判断") {
+        return question.selectedOption !== "";
       }
       return false;
     },
@@ -169,6 +189,8 @@ export default {
           question.userAnswer = question.selectedOptions;
         } else if (question.questionType === "简答") {
           question.userAnswer = [question.answerText];
+        } else if (question.questionType === "判断") {
+          question.userAnswer = [question.selectedOption];
         }
         this.$message.success("答案已提交！");
       }
@@ -199,7 +221,6 @@ export default {
       }
       return false;
     },
-
 
     getQuestionTypeTag(type) {
       const typeMap = {
@@ -239,6 +260,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
 .question-container {
   max-width: 900px;

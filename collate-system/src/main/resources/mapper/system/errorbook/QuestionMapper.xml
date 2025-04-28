@@ -32,9 +32,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <!-- 题目信息及其选项映射 -->
+    <!-- 题目信息及其选项映射 -->
     <resultMap id="quesFrontResult" type="QuestionFrontVO">
         <!-- 主表字段 -->
-        <id property="id" column="id"/>
+        <id property="id" column="question_id"/>
         <result property="questionContent" column="question_content"/>
         <result property="questionType" column="question_type"/>
         <result property="correctAnswer" column="correct_answer"/>
@@ -51,15 +52,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
         <!-- 一对多选项 -->
         <collection property="options" ofType="Options">
-            <result property="id"    column="id"    />
-            <result property="questionId"    column="question_id"    />
-            <result property="optionLabel"    column="option_label"    />
-            <result property="content"    column="content"    />
-            <result property="isCorrect"    column="is_correct"    />
-            <result property="createdAt"    column="created_at"    />
-            <result property="updatedAt"    column="updated_at"    />
+            <id property="id" column="option_id"/> <!-- 选项id -->
+            <result property="questionId" column="question_id"/>
+            <result property="optionLabel" column="option_label"/>
+            <result property="content" column="option_content"/> <!-- 注意这里是 option_content -->
+            <result property="isCorrect" column="is_correct"/>
+            <!-- created_at、updated_at 你SQL里没查到，可以不写，避免出错 -->
         </collection>
     </resultMap>
+
 
 
 
@@ -113,30 +114,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 一对多的sql -->
     <select id="selectFrontQuestionList" parameterType="integer" resultMap="quesFrontResult">
-    <!-- 查询的主表 -->
+        ### SQL:
         SELECT
-        q.id,
-        o.question_id,
-        q.question_content,
-        q.question_type,
-        q.correct_answer,
-        q.create_time,
-        q.update_time,
-        s.id AS subject_id,
-        s.subject_name,
-        b.id AS book_id,
-        b.book_name,
-        option_label,
-        content,
-        is_correct
+            q.id AS question_id,
+            q.question_content,
+            q.question_type,
+            q.correct_answer,
+            q.create_time,
+            q.update_time,
+            s.id AS subject_id,
+            s.subject_name,
+            b.id AS book_id,
+            b.book_name,
+            o.id AS option_id,
+            o.option_label,
+            o.content AS option_content,
+            o.is_correct
         FROM
-        question q
-        JOIN `subject` s ON q.subject_id = s.id
-        JOIN book b ON b.id = s.id
-        JOIN `OPTIONS` o ON q.id = o.question_id
+            question q
+                JOIN SUBJECT s ON q.subject_id = s.id
+                JOIN book b ON q.book_id = b.id
+                LEFT JOIN OPTIONS o ON q.id = o.question_id
+        where    o.option_label IS NOT NULL
+          AND o.option_label != ''  or question_type not in ('单选','多选')
         ORDER BY
-        option_label ASC
+            q.id ASC,
+            o.option_label ASC
     </select>
+
 
     <insert id="insertQuestion" parameterType="Question" useGeneratedKeys="true" keyProperty="id">
         insert into question
