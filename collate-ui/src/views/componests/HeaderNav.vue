@@ -2,16 +2,16 @@
   <el-header class="app-header">
     <div class="header-content">
       <img
+        alt="错题管理系统 Logo"
         class="app-logo"
         src="@/assets/logo/logo.png"
-        alt="错题管理系统 Logo"
       />
       <!-- 中央对齐的导航菜单 -->
       <el-menu
         :default-active="activeMenu"
-        mode="horizontal"
         background="#f5f7fa"
         class="menu"
+        mode="horizontal"
         router
       >
         <el-menu-item index="/question">
@@ -38,16 +38,16 @@
       <!-- 登录或用户信息显示 -->
       <div v-if="!isLoggedIn">
         <el-button
-          type="text"
-          size="small"
           class="login-btn"
+          size="small"
+          type="text"
           @click="redirectToLogin"
         >
           登录
         </el-button>
       </div>
       <div v-else>
-        <el-button type="text" size="small" class="login-btn">
+        <el-button class="login-btn" size="small" type="text">
           {{ userName }}
         </el-button>
       </div>
@@ -55,6 +55,8 @@
   </el-header>
 </template>
 <script>
+import Cookies from "js-cookie";
+
 export default {
   name: 'AppHeader',
   data() {
@@ -63,6 +65,14 @@ export default {
       isLoggedIn: false,            // 用户登录状态
       userName: '张三'              // 用户名，假设已登录时有此数据
     };
+  },
+  mounted() {
+    const loginFlag = Cookies.get("username")
+    if(loginFlag!==undefined){
+      // 登录
+      this.isLoggedIn = !this.isLoggedIn
+      this.userName = loginFlag
+    }
   },
   methods: {
     // 跳转到登录页
@@ -77,7 +87,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .app-header {
   height: 69px;
   background-color: #fff;
@@ -95,6 +105,7 @@ export default {
   width: 100%;
   justify-content: space-between;
 }
+
 .app-logo {
   width: 40px;
   height: 40px;
