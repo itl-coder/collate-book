@@ -97,6 +97,7 @@ export default {
   padding: 0 32px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   color: #1f2d3d;
+  -webkit-box-shadow: none !important;
 }
 
 .header-content {
