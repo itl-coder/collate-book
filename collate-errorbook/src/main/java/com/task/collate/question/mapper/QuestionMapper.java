@@ -69,4 +69,5 @@ public interface QuestionMapper
                                                   );
 
    public List<Question> selectCountFrontQuestionList();
+
 }

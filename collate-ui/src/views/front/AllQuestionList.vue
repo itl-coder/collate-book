@@ -5,17 +5,18 @@
     <div class="question-container">
 
       <!-- 顶部导航 -->
-      <el-menu :default-active="activeMenu" class="top-nav" mode="horizontal" >
+      <el-menu :default-active="activeMenu" class="top-nav" mode="horizontal">
         <div class="menu-content">
           <!-- 左侧返回按钮 -->
-          <el-menu-item index="1" @click="goBack" >
+          <el-menu-item index="1" @click="goBack">
             <i class="el-icon-arrow-left"></i> 返回
           </el-menu-item>
 
           <!-- 右侧科目选择 -->
-          <el-menu-item index="2" class="subject-select">
-            <el-input v-model="bookName" placeholder="请输入教辅名称" size="small" @clear="getFrontList" class="input-book-name" clearable></el-input>
-            <el-select v-model="selectedSubject" clearable  placeholder="请选择科目" size="small"
+          <el-menu-item class="subject-select" index="2">
+            <el-input v-model="bookName" class="input-book-name" clearable placeholder="请输入教辅名称"
+                      size="small" @clear="getFrontList"></el-input>
+            <el-select v-model="selectedSubject" clearable placeholder="请选择科目" size="small"
                        @clear="getFrontList">
               <el-option
                 v-for="subject in subjects"
@@ -24,22 +25,22 @@
                 :value="subject.subjectName"
               />
             </el-select>
-            <el-button type="primary" icon="el-icon-search" size="mini" @click="getFrontList">搜索</el-button>
+            <el-button icon="el-icon-search" size="mini" type="primary" @click="getFrontList">搜索</el-button>
           </el-menu-item>
         </div>
       </el-menu>
       <!-- 题目列表 -->
       <div
-        class="question-list"
         v-for="question in questions"
-        :key="question.id"
         v-if="!(isChoiceQuestion(question) && (!question.options || question.options.length === 0))"
+        :key="question.id"
+        class="question-list"
       >
         <div class="question-item">
           <div class="question-header">
             <span class="question-index">题目 {{ question.id }}</span>
             <div>
-              <el-tag size="small" :type="getQuestionTypeTag(question.questionType)">
+              <el-tag :type="getQuestionTypeTag(question.questionType)" size="small">
                 {{ question.questionType }}
               </el-tag>
               <el-tag
@@ -60,15 +61,15 @@
           </div>
 
           <!-- 选项部分 -->
-          <div class="question-options" v-if="question.questionType === '单选' || question.questionType === '多选'">
+          <div v-if="question.questionType === '单选' || question.questionType === '多选'" class="question-options">
             <div v-for="(option, index) in question.options" :key="index" class="option">
               <!-- 多选题 -->
               <el-checkbox
                 v-if="question.questionType === '多选'"
                 v-model="question.selectedOptions"
-                :label="option.optionLabel"
-                :disabled="question.isSubmitted"
                 :class="getOptionClass(question, option)"
+                :disabled="question.isSubmitted"
+                :label="option.optionLabel"
               >
                 {{ option.optionLabel }}.{{ option.content }}
               </el-checkbox>
@@ -77,9 +78,9 @@
               <el-radio
                 v-else
                 v-model="question.selectedOption"
-                :label="option.optionLabel"
-                :disabled="question.isSubmitted"
                 :class="getOptionClass(question, option)"
+                :disabled="question.isSubmitted"
+                :label="option.optionLabel"
               >
                 {{ option.optionLabel }}.{{ option.content }}
               </el-radio>
@@ -87,7 +88,7 @@
           </div>
 
           <!-- 判断题部分：True/False 选项 -->
-          <div class="question-options" v-if="question.questionType === '判断'">
+          <div v-if="question.questionType === '判断'" class="question-options">
             <el-radio-group v-model="question.selectedOption" :disabled="question.isSubmitted">
               <el-radio :label="'True'">正确</el-radio>
               <el-radio :label="'False'">错误</el-radio>
@@ -95,15 +96,15 @@
           </div>
 
           <!-- 简答题输入框 -->
-          <div class="question-answer" v-if="question.questionType === '简答'">
+          <div v-if="question.questionType === '简答'" class="question-answer">
             <el-input
               v-model="question.answerText"
-              type="textarea"
+              :disabled="question.isSubmitted"
+              class="answer-input"
+              clearable
               placeholder="请输入你的答案"
               rows="4"
-              clearable
-              class="answer-input"
-              :disabled="question.isSubmitted"
+              type="textarea"
             ></el-input>
           </div>
 
@@ -114,7 +115,7 @@
               <i class="el-icon-collection"></i>
               科目名称: {{ question.subjectName }}
             </span>
-              <span class="meta-item" v-if="question.bookId">
+              <span v-if="question.bookId" class="meta-item">
               <i class="el-icon-notebook-2"></i>
               教辅名称: {{ question.bookName }}
             </span>
@@ -122,10 +123,10 @@
               <!-- 提交按钮 -->
               <el-button
                 v-if="!question.isSubmitted"
+                :disabled="!hasAnswer(question)"
                 size="small"
                 type="primary"
                 @click="submitAnswer(question.id)"
-                :disabled="!hasAnswer(question)"
               >
                 提交答案
               </el-button>
@@ -133,10 +134,10 @@
               <!-- 查看答案按钮 -->
               <el-button
                 v-if="question.isSubmitted"
+                icon="el-icon-view"
                 size="small"
                 type="text"
                 @click="toggleAnswer(question.id)"
-                icon="el-icon-view"
               >
                 {{ showAnswers[question.id] ? "隐藏答案" : "查看答案" }}
               </el-button>
@@ -144,7 +145,7 @@
           </div>
 
           <!-- 答案展示区域 -->
-          <div class="answer-section" v-if="question.isSubmitted && showAnswers[question.id]">
+          <div v-if="question.isSubmitted && showAnswers[question.id]" class="answer-section">
             <div class="answer-title">正确答案：</div>
             <div class="correct-answer" v-html="formatAnswerContent(question.correctAnswer)"></div>
           </div>
@@ -154,12 +155,12 @@
       <!-- 分页组件 -->
       <div class="pagination-container">
         <el-pagination
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :page-sizes="[5, 10, 20, 50]"
+          :total="questions.length"
           background
           layout="prev, pager, next, jumper, sizes, total"
-          :total="questions.length"
-          :page-size="pageSize"
-          :current-page="currentPage"
-          :page-sizes="[5, 10, 20, 50]"
           @current-change="handleCurrentChange"
           @size-change="handleSizeChange"
         />
@@ -169,7 +170,7 @@
 </template>
 
 <script>
-import { frontListQuestion } from "@/api/errorbook/question";
+import {frontListQuestion} from "@/api/errorbook/question";
 import {countListSubject} from "@/api/errorbook/subject";
 import {addAnswer} from "@/api/errorbook/answer";
 import Cookies from "js-cookie";
@@ -195,36 +196,35 @@ export default {
   },
   methods: {
     // 加入错题本
-   async addCollateBook(type,question){
-      console.log("addCollateBook: ",question)
-      let loginUserId= this.$store.state.user.id
+    async addCollateBook(question) {
+      console.log("addCollateBook: ", question)
+      let loginUserId = this.$store.state.user.id
       let query = {
-          userId: loginUserId, // 登录用户id
-          questionId: question.id, // 题目id
-          subjectId: question.subjectId, //
-          answer: question.userAnswer[0], // 用户作答
-          isCorrect: question.correctAnswer, // 提供的正确答案
-          addCollate: 1, // 点击加入就改为1
-          sortOrder: 1 // 默认权重
+        userId: loginUserId, // 登录用户id
+        questionId: question.id, // 题目id
+        subjectId: question.subjectId, //
+        answer: question.userAnswer[0], // 用户作答
+        isCorrect: question.correctAnswer, // 提供的正确答案
+        addCollate: 1, // 点击加入就改为1
+        sortOrder: 1 // 默认权重
       }
-     const loginState = Cookies.get("username")
-     if(loginState==undefined){
-       this.$message.info("您还未登录,请先登录")
-     }else{
-       // TODO: 准备修改
-       // const res= await  addAnswer(query)
-       //   console.log("addCollateBook res: ",res)
-       //   if(res.code===200){
-       //     this.$message.success(res.msg)
-       //   }
-     }
+      const loginState = Cookies.get("username")
+      if (loginState == undefined) {
+         this.$message.info("您还未登录,请先登录")
+      } else {
+        const res = await addAnswer(query)
+        console.log("addCollateBook res: ", res)
+        if (res.code === 200) {
+          this.$message.success(res.msg)
+        }
+      }
     },
-    goBack(){
+    goBack() {
       this.$router.back()
     },
-   async getCountSubject(){
-     const res = await countListSubject()
-     this.subjects = res.data
+    async getCountSubject() {
+      const res = await countListSubject()
+      this.subjects = res.data
     },
     // 是否为单选或多选题
     isChoiceQuestion(question) {
@@ -237,7 +237,7 @@ export default {
         subjectName: this.selectedSubject,
         bookName: this.bookName
       };
-      console.log("getFrontList bookName: ",query)
+      console.log("getFrontList bookName: ", query)
       const res = await frontListQuestion(query);
       console.log("getFrontList: ", res);
 
@@ -500,6 +500,7 @@ export default {
     transform: translateY(0);
   }
 }
+
 .menu-content {
   display: flex;
   justify-content: space-between;
@@ -509,14 +510,17 @@ export default {
 .subject-select {
   text-align: right;
 }
-.input-book-name{
+
+.input-book-name {
   width: 50%;
   margin-right: 10px;
 }
-.el-button--mini{
+
+.el-button--mini {
   padding: 5px 10px;
   margin-left: 10px;
 }
+
 /* 重置 el-menu-item 在 hover 和 focus 状态下的样式 */
 .el-menu-item:hover,
 .el-menu-item:focus {
@@ -525,7 +529,8 @@ export default {
   border: none !important; /* 去除边框 */
   box-shadow: none !important; /* 去除阴影 */
 }
-.add-bk{
+
+.add-bk {
   margin-left: 10px;
   cursor: pointer;
 }

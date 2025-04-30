@@ -64,4 +64,6 @@ public interface UserAnswerMapper
    public List<UserAnswerVO> selectFrontUserAnswerList(@Param("userId") Integer userId
    ,@Param("subjectName") String subjectName
    );
+
+   public Integer countQuestionExist(Long questionId);
 }

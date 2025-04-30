@@ -97,6 +97,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectUserAnswerVo"/>
         where id = #{id}
     </select>
+    <select id="countQuestionExist" resultType="java.lang.Integer">
+        select count(*) from user_answer where id = #{questionId} and add_collate='1'
+    </select>
 
 
     <insert id="insertUserAnswer" parameterType="UserAnswer" useGeneratedKeys="true" keyProperty="id">
