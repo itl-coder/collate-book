@@ -47,7 +47,7 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/view',
+    path: '/my-mistake',
     component: () => import('@/views/front/ErrorQuestionPage'),
     hidden: true
   },

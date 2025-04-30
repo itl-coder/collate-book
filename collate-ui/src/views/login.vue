@@ -78,7 +78,7 @@ export default {
     $route: {
       handler: function (route) {
        // this.redirect = route.query && route.query.redirect;
-        this.redirect = '/view'
+        this.redirect = '/my-mistake'
         console.log(" this.redirect: ", this.redirect)
       },
       immediate: true

@@ -94,7 +94,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
-          location.href = '/view';
+          location.href = '/my-mistake';
           Cookies.remove("username")
         })
       }).catch(() => {});

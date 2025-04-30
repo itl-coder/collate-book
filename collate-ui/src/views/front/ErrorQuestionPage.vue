@@ -2,35 +2,9 @@
   <div>
     <el-container class="app-container">
       <!-- 顶部导航栏 -->
-      <el-header class="app-header">
-        <div class="header-content">
-          <img
-            class="app-logo"
-            src="@/assets/logo/logo.png"
-            alt="错题管理系统 Logo"
-          />
-          <el-menu default-active="2" mode="horizontal" background="#f5f7fa">
-            <el-menu-item index="1">
-              <i class="el-icon-document"></i>
-              <span @click="goToQuestion">全部题目</span>
-            </el-menu-item>
-            <el-menu-item index="2">
-              <i class="el-icon-warning"></i>
-              <span>我的错题</span>
-            </el-menu-item>
-            <el-menu-item index="3">
-              <i class="el-icon-notebook-2"></i>
-              <span>错题笔记</span>
-            </el-menu-item>
-            <el-menu-item index="5">
-              <i class="el-icon-data-line"></i>
-              <span>错题统计</span>
-            </el-menu-item>
-          </el-menu>
-          <el-button type="text" size="small" class="login-btn">登录</el-button>
-        </div>
+      <el-header class="sticky-header">
+        <header-nav />
       </el-header>
-
       <div class="banner">
         <!-- 轮播图 -->
         <el-carousel class="app-carousel" height="580px">
@@ -392,8 +366,11 @@
 <script>
 import {getSwipperList} from "@/api/carousel/swipper";
 import {frontListAnswer} from "@/api/errorbook/answer";
-
+import HeaderNav from "@/views/componests/HeaderNav.vue";
 export default {
+  components:{
+    HeaderNav
+  },
   data() {
     return {
       collateList: [],
@@ -578,39 +555,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.app-container {
-  min-height: 100vh;
-  padding: 0;
-  transition: all 0.2s;
-}
-
-.app-sidebar {
-  border-right: 1px solid #e6e6e6;
-  transition: all 0.3s ease;
-
-  .el-menu {
-    border-right: none;
-  }
-
-  .el-menu-item {
-    font-size: 14px;
-    transition: all 0.2s;
-
-    &:hover {
-      color: #ff4d00;
-    }
-
-    i {
-      color: #0080ff;
-    }
-  }
-
-  .el-menu-item.is-active {
-    background-color: red;
-    color: #000;
-    font-weight: 500;
-  }
-}
 
 .app-main {
   padding: 20px 0 !important;
@@ -1016,47 +960,9 @@ export default {
 .app-container {
   min-height: 100vh;
   background-color: #f5f7fa;
+  padding: 0;
 }
 
-.app-header {
-  color: #000;
-  padding: 0 20px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  height: 69px !important;
-  display: flex;
-  align-items: center;
-
-  .header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    /* 将内容分布到两端 */
-    width: 100%;
-  }
-
-  .app-logo {
-    height: 40px;
-    /* 控制 Logo 的高度 */
-    // width: auto;
-    /* 宽度自动调整 */
-    border-radius: 50%;
-  }
-
-  .el-menu {
-    border: none;
-  }
-
-  .el-menu-item {
-    font-size: 14px;
-    transition: all 0.2s;
-  }
-
-  .el-menu-item.is-active {
-    // background-color: #ecf5ff;
-    color: #409eff;
-    font-weight: 500;
-  }
-}
 
 .footer {
   background-color: #12151a;
@@ -1111,18 +1017,6 @@ export default {
   color: #007bff;
 }
 
-.el-menu {
-  background: none !important;
-  padding: 20px 0 !important;
-}
-
-.el-menu--horizontal > .el-menu-item:not(.is-disabled):hover,
-.el-menu--horizontal > .el-menu-item:not(.is-disabled):focus {
-  background: none;
-  color: rgb(0, 13, 255);
-  font-weight: bold;
-}
-
 .app-carousel {
   position: relative;
   margin-top: 15px;
@@ -1135,55 +1029,15 @@ export default {
   /* 隐藏超出的图片部分 */
 }
 
-.app-carousel img {
-  width: 100%;
-  /* 图片宽度自适应容器 */
-  height: 100%;
-  /* 图片高度自适应容器 */
-  object-fit: cover;
-  /* 保持比例并填充整个容器 */
-}
-
-.app-header {
-  position: sticky;
-  /* 吸顶定位 */
-  top: 0;
-  /* 吸顶位置为页面顶部 */
-  height: 69px;
-  /* 设置导航栏高度 */
-  z-index: 1000;
-  /* 保证导航栏层级较高，避免被其他元素遮挡 */
-  background-color: #fff;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-  padding: 0 20px;
-  /* 左右内边距 */
-}
-
-.app-logo {
-  height: 40px;
-  /* 设置 logo 高度 */
-}
-
-.el-menu {
-  margin: 0;
-}
-
-.el-menu-item {
-  font-size: 14px;
-}
-
-.login-btn {
-  margin-left: 20px;
-}
-
 .banner {
   width: 1200px;
   margin: 0 auto;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #fff;
 }
 </style>
