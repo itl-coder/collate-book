@@ -1,162 +1,169 @@
 <template>
-  <div class="question-container">
+  <div>
     <!-- 顶部导航 -->
-    <!-- 顶部导航 -->
-    <el-menu :default-active="activeMenu" class="top-nav" mode="horizontal" >
-      <div class="menu-content">
-        <!-- 左侧返回按钮 -->
-        <el-menu-item index="1" @click="goBack" >
-          <i class="el-icon-arrow-left"></i> 返回
-        </el-menu-item>
+    <header-nav/>
+    <div class="question-container">
 
-        <!-- 右侧科目选择 -->
-        <el-menu-item index="2" class="subject-select">
-          <el-select v-model="selectedSubject" placeholder="请选择科目" size="small" @change="getFrontList">
-            <el-option
-              v-for="subject in subjects"
-              :key="subject.id"
-              :label="subject.subjectName"
-              :value="subject.subjectName"
-            />
-          </el-select>
-        </el-menu-item>
-      </div>
-    </el-menu>
-    <!-- 题目列表 -->
-    <div
-      class="question-list"
-      v-for="question in questions"
-      :key="question.id"
-      v-if="!(isChoiceQuestion(question) && (!question.options || question.options.length === 0))"
-    >
-      <div class="question-item">
-        <div class="question-header">
-          <span class="question-index">题目 {{ question.id }}</span>
-         <div>
-           <el-tag size="small" :type="getQuestionTypeTag(question.questionType)">
-             {{ question.questionType }}
-           </el-tag>
-           <el-tag
-             v-if="question.isSubmitted"
-             class="add-bk"
-             size="small"
-             type="warning"
-             @click="addCollateBook(question)"
-           >
-             加入错题本
-           </el-tag>
-         </div>
+      <!-- 顶部导航 -->
+      <el-menu :default-active="activeMenu" class="top-nav" mode="horizontal" >
+        <div class="menu-content">
+          <!-- 左侧返回按钮 -->
+          <el-menu-item index="1" @click="goBack" >
+            <i class="el-icon-arrow-left"></i> 返回
+          </el-menu-item>
+
+          <!-- 右侧科目选择 -->
+          <el-menu-item index="2" class="subject-select">
+            <el-input v-model="bookName" placeholder="请输入教辅名称" size="small" @clear="getFrontList" class="input-book-name" clearable></el-input>
+            <el-select v-model="selectedSubject" clearable  placeholder="请选择科目" size="small"
+                       @clear="getFrontList">
+              <el-option
+                v-for="subject in subjects"
+                :key="subject.id"
+                :label="subject.subjectName"
+                :value="subject.subjectName"
+              />
+            </el-select>
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="getFrontList">搜索</el-button>
+          </el-menu-item>
         </div>
-
-        <!-- 题目内容 -->
-        <div class="question-content">
-          <div class="content-text" v-html="formatQuestionContent(question.questionContent)"></div>
-        </div>
-
-        <!-- 选项部分 -->
-        <div class="question-options" v-if="question.questionType === '单选' || question.questionType === '多选'">
-          <div v-for="(option, index) in question.options" :key="index" class="option">
-            <!-- 多选题 -->
-            <el-checkbox
-              v-if="question.questionType === '多选'"
-              v-model="question.selectedOptions"
-              :label="option.optionLabel"
-              :disabled="question.isSubmitted"
-              :class="getOptionClass(question, option)"
-            >
-              {{ option.optionLabel }}.{{ option.content }}
-            </el-checkbox>
-
-            <!-- 单选题 -->
-            <el-radio
-              v-else
-              v-model="question.selectedOption"
-              :label="option.optionLabel"
-              :disabled="question.isSubmitted"
-              :class="getOptionClass(question, option)"
-            >
-              {{ option.optionLabel }}.{{ option.content }}
-            </el-radio>
+      </el-menu>
+      <!-- 题目列表 -->
+      <div
+        class="question-list"
+        v-for="question in questions"
+        :key="question.id"
+        v-if="!(isChoiceQuestion(question) && (!question.options || question.options.length === 0))"
+      >
+        <div class="question-item">
+          <div class="question-header">
+            <span class="question-index">题目 {{ question.id }}</span>
+            <div>
+              <el-tag size="small" :type="getQuestionTypeTag(question.questionType)">
+                {{ question.questionType }}
+              </el-tag>
+              <el-tag
+                v-if="question.isSubmitted"
+                class="add-bk"
+                size="small"
+                type="warning"
+                @click="addCollateBook(question)"
+              >
+                加入错题本
+              </el-tag>
+            </div>
           </div>
-        </div>
 
-        <!-- 判断题部分：True/False 选项 -->
-        <div class="question-options" v-if="question.questionType === '判断'">
-          <el-radio-group v-model="question.selectedOption" :disabled="question.isSubmitted">
-            <el-radio :label="'True'">正确</el-radio>
-            <el-radio :label="'False'">错误</el-radio>
-          </el-radio-group>
-        </div>
+          <!-- 题目内容 -->
+          <div class="question-content">
+            <div class="content-text" v-html="formatQuestionContent(question.questionContent)"></div>
+          </div>
 
-        <!-- 简答题输入框 -->
-        <div class="question-answer" v-if="question.questionType === '简答'">
-          <el-input
-            v-model="question.answerText"
-            type="textarea"
-            placeholder="请输入你的答案"
-            rows="4"
-            clearable
-            class="answer-input"
-            :disabled="question.isSubmitted"
-          ></el-input>
-        </div>
+          <!-- 选项部分 -->
+          <div class="question-options" v-if="question.questionType === '单选' || question.questionType === '多选'">
+            <div v-for="(option, index) in question.options" :key="index" class="option">
+              <!-- 多选题 -->
+              <el-checkbox
+                v-if="question.questionType === '多选'"
+                v-model="question.selectedOptions"
+                :label="option.optionLabel"
+                :disabled="question.isSubmitted"
+                :class="getOptionClass(question, option)"
+              >
+                {{ option.optionLabel }}.{{ option.content }}
+              </el-checkbox>
 
-        <!-- 提交按钮 & 查看答案按钮 -->
-        <div class="question-footer">
-          <div class="meta-info">
+              <!-- 单选题 -->
+              <el-radio
+                v-else
+                v-model="question.selectedOption"
+                :label="option.optionLabel"
+                :disabled="question.isSubmitted"
+                :class="getOptionClass(question, option)"
+              >
+                {{ option.optionLabel }}.{{ option.content }}
+              </el-radio>
+            </div>
+          </div>
+
+          <!-- 判断题部分：True/False 选项 -->
+          <div class="question-options" v-if="question.questionType === '判断'">
+            <el-radio-group v-model="question.selectedOption" :disabled="question.isSubmitted">
+              <el-radio :label="'True'">正确</el-radio>
+              <el-radio :label="'False'">错误</el-radio>
+            </el-radio-group>
+          </div>
+
+          <!-- 简答题输入框 -->
+          <div class="question-answer" v-if="question.questionType === '简答'">
+            <el-input
+              v-model="question.answerText"
+              type="textarea"
+              placeholder="请输入你的答案"
+              rows="4"
+              clearable
+              class="answer-input"
+              :disabled="question.isSubmitted"
+            ></el-input>
+          </div>
+
+          <!-- 提交按钮 & 查看答案按钮 -->
+          <div class="question-footer">
+            <div class="meta-info">
             <span class="meta-item">
               <i class="el-icon-collection"></i>
               科目名称: {{ question.subjectName }}
             </span>
-            <span class="meta-item" v-if="question.bookId">
+              <span class="meta-item" v-if="question.bookId">
               <i class="el-icon-notebook-2"></i>
               教辅名称: {{ question.bookName }}
             </span>
 
-            <!-- 提交按钮 -->
-            <el-button
-              v-if="!question.isSubmitted"
-              size="small"
-              type="primary"
-              @click="submitAnswer(question.id)"
-              :disabled="!hasAnswer(question)"
-            >
-              提交答案
-            </el-button>
+              <!-- 提交按钮 -->
+              <el-button
+                v-if="!question.isSubmitted"
+                size="small"
+                type="primary"
+                @click="submitAnswer(question.id)"
+                :disabled="!hasAnswer(question)"
+              >
+                提交答案
+              </el-button>
 
-            <!-- 查看答案按钮 -->
-            <el-button
-              v-if="question.isSubmitted"
-              size="small"
-              type="text"
-              @click="toggleAnswer(question.id)"
-              icon="el-icon-view"
-            >
-              {{ showAnswers[question.id] ? "隐藏答案" : "查看答案" }}
-            </el-button>
+              <!-- 查看答案按钮 -->
+              <el-button
+                v-if="question.isSubmitted"
+                size="small"
+                type="text"
+                @click="toggleAnswer(question.id)"
+                icon="el-icon-view"
+              >
+                {{ showAnswers[question.id] ? "隐藏答案" : "查看答案" }}
+              </el-button>
+            </div>
+          </div>
+
+          <!-- 答案展示区域 -->
+          <div class="answer-section" v-if="question.isSubmitted && showAnswers[question.id]">
+            <div class="answer-title">正确答案：</div>
+            <div class="correct-answer" v-html="formatAnswerContent(question.correctAnswer)"></div>
           </div>
         </div>
-
-        <!-- 答案展示区域 -->
-        <div class="answer-section" v-if="question.isSubmitted && showAnswers[question.id]">
-          <div class="answer-title">正确答案：</div>
-          <div class="correct-answer" v-html="formatAnswerContent(question.correctAnswer)"></div>
-        </div>
       </div>
-    </div>
 
-    <!-- 分页组件 -->
-    <div class="pagination-container">
-      <el-pagination
-        background
-        layout="prev, pager, next, jumper, sizes, total"
-        :total="questions.length"
-        :page-size="pageSize"
-        :current-page="currentPage"
-        :page-sizes="[5, 10, 20, 50]"
-        @current-change="handleCurrentChange"
-        @size-change="handleSizeChange"
-      />
+      <!-- 分页组件 -->
+      <div class="pagination-container">
+        <el-pagination
+          background
+          layout="prev, pager, next, jumper, sizes, total"
+          :total="questions.length"
+          :page-size="pageSize"
+          :current-page="currentPage"
+          :page-sizes="[5, 10, 20, 50]"
+          @current-change="handleCurrentChange"
+          @size-change="handleSizeChange"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -165,13 +172,17 @@
 import { frontListQuestion } from "@/api/errorbook/question";
 import {countListSubject} from "@/api/errorbook/subject";
 import {addAnswer} from "@/api/errorbook/answer";
+import Cookies from "js-cookie";
+import HeaderNav from "@/views/componests/HeaderNav.vue";
 
 export default {
+  components: {HeaderNav},
   data() {
     return {
       activeMenu: "2", // 设置默认激活的菜单项
       subjects: [], // 科目列表
       selectedSubject: "", // 用户选择的科目
+      bookName: "",
       questions: [],
       showAnswers: {}, // 控制每道题是否展开答案
       currentPage: 1,
@@ -184,7 +195,7 @@ export default {
   },
   methods: {
     // 加入错题本
-   async addCollateBook(question){
+   async addCollateBook(type,question){
       console.log("addCollateBook: ",question)
       let loginUserId= this.$store.state.user.id
       let query = {
@@ -196,10 +207,16 @@ export default {
           addCollate: 1, // 点击加入就改为1
           sortOrder: 1 // 默认权重
       }
-    const res= await  addAnswer(query)
-     console.log("addCollateBook res: ",res)
-     if(res.code===200){
-       this.$message.success(res.msg)
+     const loginState = Cookies.get("username")
+     if(loginState==undefined){
+       this.$message.info("您还未登录,请先登录")
+     }else{
+       // TODO: 准备修改
+       // const res= await  addAnswer(query)
+       //   console.log("addCollateBook res: ",res)
+       //   if(res.code===200){
+       //     this.$message.success(res.msg)
+       //   }
      }
     },
     goBack(){
@@ -217,8 +234,10 @@ export default {
       const query = {
         pageSize: this.pageSize,
         currentPage: this.currentPage,
-        subjectName: this.selectedSubject
+        subjectName: this.selectedSubject,
+        bookName: this.bookName
       };
+      console.log("getFrontList bookName: ",query)
       const res = await frontListQuestion(query);
       console.log("getFrontList: ", res);
 
@@ -258,6 +277,7 @@ export default {
         } else if (question.questionType === "判断") {
           question.userAnswer = [question.selectedOption];
         }
+
         this.$message.success("答案已提交！");
       }
     },
@@ -489,6 +509,14 @@ export default {
 .subject-select {
   text-align: right;
 }
+.input-book-name{
+  width: 50%;
+  margin-right: 10px;
+}
+.el-button--mini{
+  padding: 5px 10px;
+  margin-left: 10px;
+}
 /* 重置 el-menu-item 在 hover 和 focus 状态下的样式 */
 .el-menu-item:hover,
 .el-menu-item:focus {
@@ -501,4 +529,5 @@ export default {
   margin-left: 10px;
   cursor: pointer;
 }
+
 </style>

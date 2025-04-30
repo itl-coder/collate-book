@@ -64,7 +64,8 @@ public interface QuestionMapper
 
     List<QuestionFrontVO> selectFrontQuestionList(@Param("pageSize") Integer pageSize,
                                                   @Param("currentPage") Integer currentPage,
-                                                  @Param("subjectName") String subjectName
+                                                  @Param("subjectName") String subjectName,
+                                                  @Param("bookName") String bookName
                                                   );
 
    public List<Question> selectCountFrontQuestionList();

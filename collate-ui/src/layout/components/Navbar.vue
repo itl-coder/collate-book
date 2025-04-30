@@ -47,6 +47,7 @@ import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
 import RuoYiGit from '@/components/RuoYi/Git'
 import RuoYiDoc from '@/components/RuoYi/Doc'
+import Cookies from "js-cookie";
 
 export default {
   components: {
@@ -93,7 +94,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
-          location.href = '/index';
+          location.href = '/view';
+          Cookies.remove("username")
         })
       }).catch(() => {});
     }

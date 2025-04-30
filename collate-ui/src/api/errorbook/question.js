@@ -52,7 +52,8 @@ export function frontListQuestion(query) {
     params: {
       pageSize: query.pageSize,
       currentPage: query.pageNum,
-      subjectName: query.subjectName
+      subjectName: query.subjectName,
+      bookName: query.bookName
     }
   })
 }

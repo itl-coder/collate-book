@@ -1,5 +1,6 @@
 import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import Cookies from "js-cookie";
 
 const user = {
   state: {
@@ -37,6 +38,8 @@ const user = {
     Login({ commit }, userInfo) {
       console.log("actions login: ",userInfo)
       const username = userInfo.username.trim()
+      console.log("actions username: ",username)
+      Cookies.set("username",username)
       const password = userInfo.password
       const code = userInfo.code
       const uuid = userInfo.uuid

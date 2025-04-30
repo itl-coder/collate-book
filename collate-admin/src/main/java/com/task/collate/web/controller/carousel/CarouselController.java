@@ -51,7 +51,7 @@ public class CarouselController extends BaseController
     /**
      * 查询轮播图列表(前台系统展示)
      */
-    @PreAuthorize("@ss.hasPermi('carousel:swipper:list')")
+    // @PreAuthorize("@ss.hasPermi('carousel:swipper:list')")
     @GetMapping("/front/list")
     public AjaxResult frontList()
     {

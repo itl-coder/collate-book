@@ -61,7 +61,7 @@ public interface IQuestionService
      */
     public int deleteQuestionById(Long id);
 
-   public List<QuestionFrontVO> selectFrontQuestionList(Integer pageSize,Integer currentPage,String subjectName);
+   public List<QuestionFrontVO> selectFrontQuestionList(Integer pageSize,Integer currentPage,String subjectName,String bookName);
 
     public   List<Question> selectCountQuestion();
 }

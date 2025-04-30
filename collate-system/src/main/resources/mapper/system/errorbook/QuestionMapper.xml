@@ -144,6 +144,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="subjectName!=null and subjectName!='' ">
                  subject_name = #{subjectName}
             </if>
+            <if test="bookName!=null and bookName!='' ">
+             and   book_name like  concat('%', #{bookName}, '%')
+            </if>
 
         </where>
         ORDER BY

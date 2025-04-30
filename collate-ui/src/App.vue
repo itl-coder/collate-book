@@ -7,6 +7,7 @@
 
 <script>
 import ThemePicker from "@/components/ThemePicker";
+import watermark from "watermark-dom";
 
 export default {
   name: "App",
@@ -18,7 +19,12 @@ export default {
         return title ? `${title} - ${process.env.VUE_APP_TITLE}` : process.env.VUE_APP_TITLE
       }
     }
-  }
+  },
+  mounted() {
+    // 加载水印
+    // const username = "暂未交付，禁止使用 Auth: coder-itl";
+    // watermark.load({ watermark_txt: username + "水印" });
+  },
 };
 </script>
 <style scoped>

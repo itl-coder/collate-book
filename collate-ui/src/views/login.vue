@@ -71,15 +71,15 @@ export default {
       loading: false,
       // 验证码开关
       captchaEnabled: true,
-      // 注册开关
-      register: true,
       redirect: undefined
     };
   },
   watch: {
     $route: {
       handler: function (route) {
-        this.redirect = route.query && route.query.redirect;
+       // this.redirect = route.query && route.query.redirect;
+        this.redirect = '/view'
+        console.log(" this.redirect: ", this.redirect)
       },
       immediate: true
     }

@@ -47,22 +47,23 @@ public class QuestionController extends BaseController
     }
 
 
-    @PreAuthorize("@ss.hasPermi('errorbook:question:list')")
+    // @PreAuthorize("@ss.hasPermi('errorbook:question:list')")
     @GetMapping("/front/list")
     public AjaxResult frontList(
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(defaultValue = "1") Integer currentPage,
-            @RequestParam(required = false) String subjectName
+            @RequestParam(required = false) String subjectName,
+            @RequestParam(required = false) String bookName
     )
     {
         PageHelper.startPage(currentPage, pageSize);
 
-        List<QuestionFrontVO> list  = questionService.selectFrontQuestionList(pageSize,currentPage,subjectName);
+        List<QuestionFrontVO> list  = questionService.selectFrontQuestionList(pageSize,currentPage,subjectName,bookName);
         PageInfo<QuestionFrontVO> questionFrontVOPageInfo = new PageInfo<>(list);
         return success(questionFrontVOPageInfo);
     }
 
-    @PreAuthorize("@ss.hasPermi('errorbook:question:list')")
+    // @PreAuthorize("@ss.hasPermi('errorbook:question:list')")
     @GetMapping("/front/count/list")
     public AjaxResult countFrontList(){
       List<Question> list=  questionService.selectCountQuestion();

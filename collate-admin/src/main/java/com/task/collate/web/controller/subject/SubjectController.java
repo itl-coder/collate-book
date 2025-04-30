@@ -49,7 +49,7 @@ public class SubjectController extends BaseController
     /**
      * 查询科目分类列表
      */
-    @PreAuthorize("@ss.hasPermi('errorbook:subject:list')")
+    // @PreAuthorize("@ss.hasPermi('errorbook:subject:list')")
     @GetMapping("/count/list")
     public AjaxResult listSubjectCount(){
      List<Subject> subjectList =  subjectService.countSubjectList();

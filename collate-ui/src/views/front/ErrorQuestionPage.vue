@@ -103,10 +103,10 @@
 
                       <div class="answer-block">
                         <span class="label">我的答案：</span>
-                      <!-- 错误答案 -->
+                        <!-- 错误答案 -->
                         <span class="wrong-answer" :title="collate.answer">{{
-                          truncateText(collate.answer)
-                        }}</span>
+                            truncateText(collate.answer)
+                          }}</span>
                       </div>
 
                       <div class="answer-block">
@@ -114,7 +114,7 @@
                         <span
                           class="correct-answer"
                           :title="collate.correctAnswer"
-                          >{{ truncateText(collate.correctAnswer) }}</span
+                        >{{ truncateText(collate.correctAnswer) }}</span
                         >
                       </div>
 
@@ -272,7 +272,7 @@
               <div class="dialog-meta">
                 <div class="meta-item">
                   <span class="meta-label"
-                    ><i class="el-icon-collection-tag"></i> 标签：</span
+                  ><i class="el-icon-collection-tag"></i> 标签：</span
                   >
                   <el-tag
                     v-for="(tag, index) in currentItem.tags"
@@ -287,7 +287,7 @@
 
                 <div class="meta-item">
                   <span class="meta-label"
-                    ><i class="el-icon-trophy"></i> 重要等级：</span
+                  ><i class="el-icon-trophy"></i> 重要等级：</span
                   >
                   <el-dropdown
                     trigger="click"
@@ -333,7 +333,7 @@
 
                 <div class="meta-item">
                   <span class="meta-label"
-                    ><i class="el-icon-notebook-2"></i> 科目：</span
+                  ><i class="el-icon-notebook-2"></i> 科目：</span
                   >
                   <span>{{ currentItem.subject }}</span>
                 </div>
@@ -367,19 +367,19 @@
                 href="https://www.weibo.com"
                 target="_blank"
                 class="social-icon weibo"
-                >微博</a
+              >微博</a
               >
               <a
                 href="https://www.qq.com"
                 target="_blank"
                 class="social-icon qq"
-                >QQ</a
+              >QQ</a
               >
               <a
                 href="https://www.wechat.com"
                 target="_blank"
                 class="social-icon wechat"
-                >微信</a
+              >微信</a
               >
             </div>
           </div>
@@ -426,11 +426,11 @@ export default {
     },
   },
   methods: {
-   async getCollateData(){
-     let query = {
+    async getCollateData(){
+      let query = {
         userId:1,
         subjectName:''
-     }
+      }
       const res=  await frontListAnswer(query)
       console.log("getCollateData res: ",res)
       this.collateList = res.data
@@ -438,10 +438,10 @@ export default {
     goToQuestion(){
       this.$router.push("/question")
     },
-   async fetchSwipperData(){
-     const res = await getSwipperList()
-     this.swipperList = res.data
-     console.log("fetchSwipperData: ",res)
+    async fetchSwipperData(){
+      const res = await getSwipperList()
+      this.swipperList = res.data
+      console.log("fetchSwipperData: ",res)
     },
 
     fetchData() {
