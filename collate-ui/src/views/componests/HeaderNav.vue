@@ -89,6 +89,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   height: 69px;
   background-color: #fff;
   display: flex;
@@ -99,6 +102,7 @@ export default {
   color: #1f2d3d;
   -webkit-box-shadow: none !important;
 }
+
 
 .header-content {
   display: flex;
