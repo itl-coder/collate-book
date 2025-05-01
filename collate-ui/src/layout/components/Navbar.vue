@@ -96,6 +96,7 @@ export default {
         this.$store.dispatch('LogOut').then(() => {
           location.href = '/my-mistake';
           Cookies.remove("username")
+          Cookies.remove("userId")
         })
       }).catch(() => {});
     }

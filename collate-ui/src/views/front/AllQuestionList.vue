@@ -198,7 +198,8 @@ export default {
     // 加入错题本
     async addCollateBook(question) {
       console.log("addCollateBook: ", question)
-      let loginUserId = this.$store.state.user.id
+      let loginUserId = Cookies.get("userId")
+      console.log("loginUserId: ", loginUserId)
       let query = {
         userId: loginUserId, // 登录用户id
         questionId: question.id, // 题目id
@@ -208,9 +209,10 @@ export default {
         addCollate: 1, // 点击加入就改为1
         sortOrder: 1 // 默认权重
       }
-      const loginState = Cookies.get("username")
-      if (loginState == undefined) {
-         this.$message.info("您还未登录,请先登录")
+      const loginState = Cookies.get("username") || Cookies.get("userId");
+      if (loginState == undefined || loginState=="") {
+        this.$message.info("您还未登录,请先登录")
+        return;
       } else {
         const res = await addAnswer(query)
         console.log("addCollateBook res: ", res)

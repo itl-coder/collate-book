@@ -367,6 +367,7 @@
 import {getSwipperList} from "@/api/carousel/swipper";
 import {frontListAnswer} from "@/api/errorbook/answer";
 import HeaderNav from "@/views/componests/HeaderNav.vue";
+import Cookies from "js-cookie";
 export default {
   components:{
     HeaderNav
@@ -404,16 +405,21 @@ export default {
   },
   methods: {
     async getCollateData(){
+      let loginState = Cookies.get("userId")
       let query = {
-        userId:1,
+        userId: loginState,
         subjectName:''
+      }
+      if(loginState==undefined || loginState==""){
+        this.$message.error("请重新登录!")
+        return;
       }
       const res=  await frontListAnswer(query)
       console.log("getCollateData res: ",res)
       this.collateList = res.data
     },
     goToQuestion(){
-      this.$router.push("/question")
+      this.$router.push("/my-mistake")
     },
     async fetchSwipperData(){
       const res = await getSwipperList()

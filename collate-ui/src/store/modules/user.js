@@ -66,7 +66,9 @@ const user = {
           } else {
             commit('SET_ROLES', ['ROLE_DEFAULT'])
           }
+          console.log("GETInfo: : ",user)
           commit('SET_ID', user.userId)
+          Cookies.set("userId",user.userId)
           commit('SET_NAME', user.userName)
           commit('SET_AVATAR', avatar)
           resolve(res)

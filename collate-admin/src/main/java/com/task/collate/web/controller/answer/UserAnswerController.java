@@ -51,7 +51,7 @@ public class UserAnswerController extends BaseController
     /**
      * 查询用户作答列表
      */
-    @PreAuthorize("@ss.hasPermi('errorbook:answer:list')")
+    // add@PreAuthorize("@ss.hasPermi('errorbook:answer:list')")
     @GetMapping("/front/list")
     public AjaxResult frontLoginUserList(Integer userId,String subjectName)
     {
@@ -86,7 +86,7 @@ public class UserAnswerController extends BaseController
     /**
      * 新增用户作答
      */
-    @PreAuthorize("@ss.hasPermi('errorbook:answer:add')")
+    // @PreAuthorize("@ss.hasPermi('errorbook:answer:add')")
     @Log(title = "用户作答", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody UserAnswer userAnswer)
