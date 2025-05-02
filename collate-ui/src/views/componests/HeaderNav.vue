@@ -22,10 +22,10 @@
           <i class="el-icon-warning"></i>
           <span>我的错题</span>
         </el-menu-item>
-        <el-menu-item index="/notes">
-          <i class="el-icon-notebook-2"></i>
-          <span>错题笔记</span>
-        </el-menu-item>
+<!--        <el-menu-item index="/notes">-->
+<!--          <i class="el-icon-notebook-2"></i>-->
+<!--          <span>错题笔记</span>-->
+<!--        </el-menu-item>-->
         <el-menu-item index="/stats">
           <i class="el-icon-data-line"></i>
           <span>错题统计</span>

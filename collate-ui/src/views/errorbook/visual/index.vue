@@ -30,7 +30,7 @@ export default {
   },
   data() {
     return {
-      type: 'bar',
+      type: 'tag',
       chartInstance: null
     }
   },
@@ -54,16 +54,50 @@ export default {
         const xAxisData = data.map(d => d.tag_name)
         const seriesData = data.map(d => d.wrong_count)
 
-        this.chartInstance.setOption({
-          title: { text: '错题统计' },
-          tooltip: {},
-          xAxis: { type: 'category', data: xAxisData },
-          yAxis: { type: 'value' },
+        if (this.type === 'accuracy') {
+          this.renderAccuracyChart(data)
+        } else{
+          this.renderBarOrPieChart(data)
+        }
+      })
+    },
+    renderBarOrPieChart(data) {
+      const xData = data.map(item => item.tag_name)
+      const yData = data.map(item => item.wrong_count)
+
+      const isPie = this.type === 'subject'
+      const option = isPie
+        ? {
+          title: { text: '错题分布（按学科）', left: 'center' },
+          tooltip: { trigger: 'item' },
           series: [{
-            data: seriesData,
-            type: 'bar'
+            type: 'pie',
+            radius: '50%',
+            data: data.map(item => ({ name: item.tag_name, value: item.wrong_count })),
+            emphasis: {
+              itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' }
+            }
           }]
-        })
+        }
+        : {
+          title: { text: '错题统计' },
+          xAxis: { type: 'category', data: xData },
+          yAxis: { type: 'value' },
+          series: [{ data: yData, type: this.type === 'month' ? 'line' : 'bar' }]
+        }
+
+      this.chartInstance.setOption(option)
+    },
+
+    renderAccuracyChart(data) {
+      const value = parseFloat(data[0]?.accuracy || 0).toFixed(2)
+      this.chartInstance.setOption({
+        title: { text: '正确率', left: 'center' },
+        series: [{
+          type: 'gauge',
+          detail: { formatter: '{value}%' },
+          data: [{ value, name: '准确率' }]
+        }]
       })
     }
   }
