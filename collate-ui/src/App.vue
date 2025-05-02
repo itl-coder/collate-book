@@ -27,8 +27,11 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style >
 #app .theme-picker {
   display: none;
+}
+.app-container{
+  padding: 0;
 }
 </style>

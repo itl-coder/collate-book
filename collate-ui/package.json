@@ -1,8 +1,8 @@
 {
-  "name": "ruoyi",
+  "name": "ErrorBook",
   "version": "3.8.7",
   "description": "错题本管理系统",
-  "author": "若依",
+  "author": "collate",
   "license": "MIT",
   "scripts": {
     "dev": "vue-cli-service serve",

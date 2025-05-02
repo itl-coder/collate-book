@@ -100,6 +100,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="countQuestionExist" resultType="java.lang.Integer">
         select count(*) from user_answer where id = #{questionId} and add_collate='1'
     </select>
+    <select id="lineList" resultType="java.util.Map">
+        SELECT tag_name, COUNT(*) AS wrong_count
+        FROM user_answer ua join tag on ua.tag_id = tag.id
+        WHERE ua.user_id = #{userId}
+        GROUP BY tag_name
+        ORDER BY wrong_count DESC;
+    </select>
 
 
     <insert id="insertUserAnswer" parameterType="UserAnswer" useGeneratedKeys="true" keyProperty="id">

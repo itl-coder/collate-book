@@ -410,8 +410,9 @@ export default {
         userId: loginState,
         subjectName:''
       }
+      console.log("aa loginState: ",loginState)
       if(loginState==undefined || loginState==""){
-        this.$message.error("请重新登录!")
+        this.$message.error("登录已失效,请重新登录!")
         return;
       }
       const res=  await frontListAnswer(query)

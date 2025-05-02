@@ -1,6 +1,8 @@
 package com.task.collate.answer.mapper;
 
 import java.util.List;
+import java.util.Map;
+
 import com.task.collate.answer.domain.UserAnswer;
 import com.task.collate.answer.domain.vo.UserAnswerVO;
 import org.apache.ibatis.annotations.Param;
@@ -66,4 +68,6 @@ public interface UserAnswerMapper
    );
 
    public Integer countQuestionExist(Long questionId);
+
+   public List<Map<String,Object>> lineList(Long userId);
 }

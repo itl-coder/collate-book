@@ -51,6 +51,16 @@ export const constantRoutes = [
     component: () => import('@/views/front/ErrorQuestionPage'),
     hidden: true
   },
+  {
+    path: '/stats',
+    component: () => import('@/views/errorbook/visual'),
+    hidden: true
+  },
+  {
+    path: '/ex/stats',
+    component: () => import('@/views/index_v1.vue'),
+    hidden: true
+  },
    {
     path: '/question',
     component: () => import('@/views/front/AllQuestionList'),

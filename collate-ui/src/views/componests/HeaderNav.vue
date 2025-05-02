@@ -98,7 +98,8 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 0 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  //box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(255, 27, 27, 0.05);
   color: #1f2d3d;
   -webkit-box-shadow: none !important;
 }
@@ -170,5 +171,4 @@ export default {
   color: #409EFF;
   font-weight: bold;
 }
-
 </style>

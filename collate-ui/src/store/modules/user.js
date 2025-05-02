@@ -38,8 +38,9 @@ const user = {
     Login({ commit }, userInfo) {
       console.log("actions login: ",userInfo)
       const username = userInfo.username.trim()
-      console.log("actions username: ",username)
+      console.log("actions username: ",userInfo)
       Cookies.set("username",username)
+
       const password = userInfo.password
       const code = userInfo.code
       const uuid = userInfo.uuid
