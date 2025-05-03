@@ -3,26 +3,26 @@
     <el-container class="app-container">
       <!-- 顶部导航栏 -->
       <el-header class="sticky-header">
-        <header-nav />
+        <header-nav/>
       </el-header>
       <div class="banner">
         <!-- 轮播图 -->
         <el-carousel class="app-carousel" height="580px">
           <el-carousel-item v-for="item in swipperList" :key="item.id">
-            <image-preview :src="item.imageUrl"  :width="1200" :height="580" />
+            <image-preview :height="580" :src="item.imageUrl" :width="1200"/>
           </el-carousel-item>
         </el-carousel>
         <el-container class="banner">
           <!-- 主体内容区 -->
           <el-main class="app-main">
-            <el-card shadow="never" class="main-card">
+            <el-card class="main-card" shadow="never">
               <div slot="header" class="card-header">
                 <span class="card-title">我的错题</span>
                 <el-button
                   v-if="isMobile"
+                  class="sidebar-toggle"
                   size="mini"
                   @click="toggleSidebar"
-                  class="sidebar-toggle"
                 >
                   <i
                     :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"
@@ -34,9 +34,9 @@
               <div class="search-area">
                 <el-input
                   v-model="search"
-                  placeholder="输入题目关键词"
-                  clearable
                   class="search-input"
+                  clearable
+                  placeholder="输入题目关键词"
                   @keyup.enter.native="fetchData"
                 >
                   <el-button
@@ -48,36 +48,26 @@
               </div>
 
               <!-- 错题卡片列表 -->
-              <div class="card-list" >
+              <div class="card-list">
                 <el-row :gutter="20">
                   <el-col
-                    :xs="24"
-                    :sm="12"
-                    v-for="collate in collateList" :key="collate.id"
+                    v-for="collate in collateList"
+                    :key="collate.id"
+                    :sm="12" :xs="24"
                   >
                     <el-card
-                      shadow="always"
-                      class="question-card"
                       :class="{ 'has-image': collate.image }"
+                      class="question-card"
+                      shadow="always"
                     >
-                      <!-- 题目图片展示 -->
-                      <div class="question-image" v-if="collate.image">
-                        <el-image
-                          :src="item.image"
-                          fit="cover"
-                          :preview-src-list="[item.image]"
-                          class="question-image-content"
-                        ></el-image>
-                      </div>
-
                       <div class="question-title">题目：</div>
-                      <div class="question-content"  v-html="collate.questionContent">
+                      <div class="question-content" v-html="collate.questionContent">
                       </div>
 
                       <div class="answer-block">
                         <span class="label">我的答案：</span>
                         <!-- 错误答案 -->
-                        <span class="wrong-answer" :title="collate.answer">{{
+                        <span :title="collate.answer" class="wrong-answer">{{
                             truncateText(collate.answer)
                           }}</span>
                       </div>
@@ -85,8 +75,8 @@
                       <div class="answer-block">
                         <span class="label">正确答案：</span>
                         <span
-                          class="correct-answer"
                           :title="collate.correctAnswer"
+                          class="correct-answer"
                         >{{ truncateText(collate.correctAnswer) }}</span
                         >
                       </div>
@@ -97,10 +87,10 @@
                           @command="handleImportanceChange(collate, $event)"
                         >
                           <el-tag
-                            :type="tagType(collate.tagId)"
-                            size="small"
-                            class="importance-tag"
                             :class="'level-' + collate.tagId"
+                            :type="tagType(collate.tagId)"
+                            class="importance-tag"
+                            size="small"
                           >
                             <i class="el-icon-warning"></i>
                             {{ getImportanceText(collate.tagId) }}
@@ -108,26 +98,26 @@
                           </el-tag>
                           <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item
-                              command="1"
                               :class="{
                                 'is-selected': collate.tagId === 1,
                               }"
+                              command="1"
                             >
-                              <i class="el-icon-info"></i> {{collate.tagName}}
+                              <i class="el-icon-info"></i> {{ collate.tagName }}
                             </el-dropdown-item>
                             <el-dropdown-item
-                              command="2"
                               :class="{
                                 'is-selected': collate.tagId === 2,
                               }"
+                              command="2"
                             >
                               <i class="el-icon-warning"></i> 重要
                             </el-dropdown-item>
                             <el-dropdown-item
-                              command="3"
                               :class="{
                                 'is-selected': collate.tagId === 3,
                               }"
+                              command="3"
                             >
                               <i class="el-icon-error"></i> 非常重要
                             </el-dropdown-item>
@@ -136,26 +126,26 @@
 
                         <div class="action-buttons">
                           <el-button
-                            type="text"
-                            size="small"
-                            @click="showDetail(collate)"
                             class="detail-btn"
+                            size="small"
+                            type="text"
+                            @click="showDetail(collate)"
                           >
                             <i class="el-icon-view"></i> 详情
                           </el-button>
                           <el-button
-                            type="text"
-                            size="small"
-                            @click="viewNote(collate)"
                             class="note-btn"
+                            size="small"
+                            type="text"
+                            @click="viewNote(collate)"
                           >
                             <i class="el-icon-document"></i> 笔记
                           </el-button>
                           <el-button
-                            type="text"
-                            size="small"
-                            @click="editItem(collate)"
                             class="edit-btn"
+                            size="small"
+                            type="text"
+                            @click="editItem(collate)"
                           >
                             <i class="el-icon-edit"></i> 编辑
                           </el-button>
@@ -164,27 +154,26 @@
                     </el-card>
                   </el-col>
                 </el-row>
-
                 <!-- 空状态提示 -->
                 <el-empty
                   v-if="tableData.length === 0"
-                  description="暂无错题数据"
                   class="empty-tip"
+                  description="暂无错题数据"
                 ></el-empty>
               </div>
 
               <!-- 分页 -->
-              <div class="pagination-area" v-if="tableData.length > 0">
+              <div v-if="tableData.length > 0" class="pagination-area">
                 <el-pagination
+                  :current-page="currentPage"
+                  :page-size="pageSize"
+                  :pager-count="isMobile ? 3 : 5"
+                  :total="total"
                   background
                   layout="prev, pager, next, jumper"
-                  :total="total"
-                  :page-size="pageSize"
-                  :current-page="currentPage"
-                  @current-change="handlePageChange"
-                  :pager-count="isMobile ? 3 : 5"
-                  prev-text="上一页"
                   next-text="下一页"
+                  prev-text="上一页"
+                  @current-change="handlePageChange"
                 ></el-pagination>
               </div>
             </el-card>
@@ -193,27 +182,27 @@
 
         <!-- 详情弹窗 -->
         <el-dialog
-          :visible.sync="detailVisible"
           :title="'错题详情 - ' + currentItem.subject"
-          width="70%"
-          top="5vh"
+          :visible.sync="detailVisible"
           class="detail-dialog"
+          top="5vh"
+          width="70%"
         >
           <div class="dialog-content">
             <!-- 图片展示区 -->
-            <div class="dialog-image-area" v-if="currentItem.image">
+            <div v-if="currentItem.image" class="dialog-image-area">
               <el-image
-                :src="currentItem.image"
-                fit="contain"
-                class="dialog-image"
                 :preview-src-list="[currentItem.image]"
+                :src="currentItem.image"
+                class="dialog-image"
+                fit="contain"
               ></el-image>
             </div>
 
             <!-- 主要内容区 -->
             <div
-              class="dialog-main"
               :class="{ 'has-image': currentItem.image }"
+              class="dialog-main"
             >
               <div class="dialog-section">
                 <h3 class="dialog-section-title">
@@ -250,9 +239,9 @@
                   <el-tag
                     v-for="(tag, index) in currentItem.tags"
                     :key="index"
+                    class="meta-tag"
                     size="small"
                     type="info"
-                    class="meta-tag"
                   >
                     {{ tag }}
                   </el-tag>
@@ -267,9 +256,9 @@
                     @command="handleImportanceChange(currentItem, $event)"
                   >
                     <el-tag
+                      :class="'level-' + currentItem.importance_level"
                       :type="tagType(currentItem.importance_level)"
                       size="small"
-                      :class="'level-' + currentItem.importance_level"
                     >
                       <i class="el-icon-warning"></i>
                       {{ getImportanceText(currentItem.importance_level) }}
@@ -277,26 +266,26 @@
                     </el-tag>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item
-                        command="1"
                         :class="{
                           'is-selected': currentItem.importance_level === 1,
                         }"
+                        command="1"
                       >
                         <i class="el-icon-info"></i> 一般
                       </el-dropdown-item>
                       <el-dropdown-item
-                        command="2"
                         :class="{
                           'is-selected': currentItem.importance_level === 2,
                         }"
+                        command="2"
                       >
                         <i class="el-icon-warning"></i> 重要
                       </el-dropdown-item>
                       <el-dropdown-item
-                        command="3"
                         :class="{
                           'is-selected': currentItem.importance_level === 3,
                         }"
+                        command="3"
                       >
                         <i class="el-icon-error"></i> 非常重要
                       </el-dropdown-item>
@@ -316,49 +305,8 @@
         </el-dialog>
       </div>
     </el-container>
-
-    <el-footer>
-      <div class="app-wrapper">
-        <!-- 底部版权信息 -->
-        <footer class="footer">
-          <div class="footer-container">
-            <div class="copyright">
-              ©2025 错题本系统 | 提升学习效率，从整理错题开始
-            </div>
-            <div class="footer-links">
-              <ul>
-                <li><a href="/about-us" target="_blank">关于我们</a></li>
-                <li><a href="/privacy-policy" target="_blank">隐私政策</a></li>
-                <li>
-                  <a href="/terms-of-service" target="_blank">使用条款</a>
-                </li>
-                <li><a href="/contact" target="_blank">联系我们</a></li>
-              </ul>
-            </div>
-            <div class="social-media">
-              <a
-                href="https://www.weibo.com"
-                target="_blank"
-                class="social-icon weibo"
-              >微博</a
-              >
-              <a
-                href="https://www.qq.com"
-                target="_blank"
-                class="social-icon qq"
-              >QQ</a
-              >
-              <a
-                href="https://www.wechat.com"
-                target="_blank"
-                class="social-icon wechat"
-              >微信</a
-              >
-            </div>
-          </div>
-        </footer>
-      </div>
-    </el-footer>
+    <!-- 底部 -->
+    <common-footer/>
   </div>
 </template>
 
@@ -367,14 +315,17 @@ import {getSwipperList} from "@/api/carousel/swipper";
 import {frontListAnswer} from "@/api/errorbook/answer";
 import HeaderNav from "@/views/componests/HeaderNav.vue";
 import Cookies from "js-cookie";
+import CommonFooter from "@/views/componests/CommonFooter.vue";
+
 export default {
-  components:{
+  components: {
+    CommonFooter,
     HeaderNav
   },
   data() {
     return {
       collateList: [],
-      swipperList:[],
+      swipperList: [],
       search: "",
       tableData: [],
       currentPage: 1,
@@ -424,10 +375,10 @@ export default {
         this.$message.error("加载数据失败");
       }
     },
-    async fetchSwipperData(){
+    async fetchSwipperData() {
       const res = await getSwipperList()
       this.swipperList = res.data
-      console.log("fetchSwipperData: ",res)
+      console.log("fetchSwipperData: ", res)
     },
 
     fetchData() {
@@ -484,7 +435,7 @@ export default {
     },
     handlePageChange(page) {
       this.currentPage = page;
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({top: 0, behavior: "smooth"});
     },
     tagType(level) {
       switch (level) {
@@ -972,44 +923,6 @@ export default {
   padding: 0;
 }
 
-
-.footer {
-  background-color: #12151a;
-  padding: 20px;
-  text-align: center;
-  font-size: 14px;
-  font-weight: bold;
-  color: hsla(0, 0%, 100%, 0.8);
-}
-
-.el-footer {
-  padding: 0 !important;
-}
-
-.footer .copyright {
-  margin-bottom: 10px;
-  font-size: 16px;
-}
-
-.footer-links ul {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0;
-}
-
-.footer-links ul li {
-  display: inline-block;
-  margin: 0 15px;
-}
-
-.footer-links a {
-  color: hsla(0, 0%, 100%, 0.8);
-  text-decoration: none;
-}
-
-.footer-links a:hover {
-  text-decoration: underline;
-}
 
 .social-media {
   margin-top: 20px;

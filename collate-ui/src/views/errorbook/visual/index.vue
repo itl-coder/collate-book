@@ -14,6 +14,7 @@
       </el-form>
       <div ref="chart" style="width: 100%; height: 400px; margin-top: 20px;"></div>
     </el-card>
+    <common-footer/>
   </div>
 </template>
 
@@ -22,10 +23,12 @@ import * as echarts from 'echarts'
 import request from '@/utils/request'
 import HeaderNav from "@/views/componests/HeaderNav.vue";
 import Cookies from "js-cookie";
+import CommonFooter from "@/views/componests/CommonFooter.vue";
 
 export default {
   name: 'WrongStats',
   components:{
+    CommonFooter,
     HeaderNav
   },
   data() {

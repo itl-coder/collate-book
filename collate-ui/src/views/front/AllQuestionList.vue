@@ -166,6 +166,7 @@
         />
       </div>
     </div>
+    <common-footer/>
   </div>
 </template>
 
@@ -175,9 +176,10 @@ import {countListSubject} from "@/api/errorbook/subject";
 import {addAnswer} from "@/api/errorbook/answer";
 import Cookies from "js-cookie";
 import HeaderNav from "@/views/componests/HeaderNav.vue";
+import CommonFooter from "@/views/componests/CommonFooter.vue";
 
 export default {
-  components: {HeaderNav},
+  components: {CommonFooter, HeaderNav},
   data() {
     return {
       activeMenu: "2", // 设置默认激活的菜单项
