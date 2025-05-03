@@ -50,15 +50,15 @@
             <!-- 教辅下拉框 -->
             <el-select
               v-model="selectedBook"
-              placeholder="选择教辅"
+              placeholder="选择标签"
               clearable
               style="margin-right: 10px;"
             >
               <el-option
-                v-for="book in books"
-                :key="book.id"
-                :label="book.bookName"
-                :value="book.id"
+                v-for="tag in tagCountList"
+                :key="tag.id"
+                :label="tag.tagName"
+                :value="tag.id"
               />
             </el-select>
 
@@ -213,11 +213,9 @@ export default {
       const query = {
         userId: loginState,
         subjectId: this.selectedSubject,
-        bookId: this.selectedBook,
-        page: this.currentPage,
-        size: this.pageSize,
+        tagId: this.selectedBook,
       };
-
+      console.log("getCollate quesy: ",query)
       try {
         const res = await frontListAnswer(query);
         this.collateList = res.data ;

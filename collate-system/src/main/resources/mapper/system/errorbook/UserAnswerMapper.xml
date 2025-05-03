@@ -65,11 +65,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             add_collate = 1
             and ua.user_id=#{userId}
-            <if test="subjectName!=null and subjectName!=''">
-                and subject_name=#{subjectName}
+            <if test="subjectId!=null and subjectId!=''">
+                and q.subject_id=#{subjectId}
             </if>
-            <if test="bookName!=null and bookName!=''">
-             and book_name like concat('%',#{bookName},'%')
+            <if test="tagId!=null and tagId!=''">
+             and ua.tag_id = #{tagId}
             </if>
         </where> order by sort_order desc;
     </select>

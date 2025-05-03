@@ -64,8 +64,8 @@ public interface UserAnswerMapper
     public int deleteUserAnswerByIds(Long[] ids);
 
    public List<UserAnswerVO> selectFrontUserAnswerList(@Param("userId") Integer userId,
-                                                       @Param("subjectName") String subjectName,
-                                                       @Param("bookName") String bookName
+                                                       @Param("subjectId") Integer subjectId,
+                                                       @Param("tagId") Integer tagId
    );
 
    public Integer countQuestionExist(Long questionId);

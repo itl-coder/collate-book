@@ -48,10 +48,10 @@ public class UserAnswerController extends BaseController
     @GetMapping("/front/list")
     public AjaxResult frontLoginUserList(
             @RequestParam Integer userId,
-            @RequestParam(required = false) String subjectName,
-            @RequestParam(required = false) String bookName)
+            @RequestParam(required = false) Integer subjectId,
+            @RequestParam(required = false) Integer tagId)
     {
-        List<UserAnswerVO> list = userAnswerService.selectFrontUserAnswerList(userId,subjectName,bookName);
+        List<UserAnswerVO> list = userAnswerService.selectFrontUserAnswerList(userId,subjectId,tagId);
         return success(list);
     }
 
