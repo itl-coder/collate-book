@@ -12,22 +12,6 @@
         </el-tag>
 
         <!-- 操作下拉菜单 -->
-<!--        <el-dropdown @command="handleDropdownCommand">-->
-<!--          <el-button size="mini" icon="el-icon-more" type="primary">-->
-<!--            操作<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
-<!--          </el-button>-->
-<!--          <el-dropdown-menu slot="dropdown">-->
-<!--            <el-dropdown-item command="editTag">-->
-<!--              <i class="el-icon-edit"></i> 修改标签-->
-<!--            </el-dropdown-item>-->
-<!--            <el-dropdown-item command="editWeight">-->
-<!--              <i class="el-icon-sort"></i> 修改权重-->
-<!--            </el-dropdown-item>-->
-<!--            <el-dropdown-item divided command="delete">-->
-<!--              <i class="el-icon-delete"></i> 删除-->
-<!--            </el-dropdown-item>-->
-<!--          </el-dropdown-menu>-->
-<!--        </el-dropdown>-->
         <el-dropdown @command="handleDropdownCommand">
           <el-button size="mini" icon="el-icon-more" type="primary">
             操作<i class="el-icon-arrow-down el-icon--right"></i>
@@ -99,7 +83,6 @@
           size="mini"
           icon="el-icon-plus"
           @click="increaseWeight"
-          :disabled="weight >= maxWeight"
         >
           增加
         </el-button>
@@ -172,34 +155,33 @@ export default {
 
     /** 显示权重弹窗 */
     showWeightDialog(item) {
-      this.weight = this.item.weight || 1
+      this.updateItemId = item.id
       this.weightDialogVisible = true
     },
 
     /** 增加权重 */
     increaseWeight() {
-      if (this.weight < this.maxWeight) {
-        this.weight += 1
-      }
+      this.weight += 1
     },
 
     /** 权重修改确认 */
     confirmWeightChange() {
       this.weightDialogVisible = false
       this.$emit('update-weight', {
-        mistakeId: this.item.id,
-        weight: this.weight
+        mistakeId: this.updateItemId,
+        sortOrder: this.weight
       })
     },
 
     /** 删除确认 */
-    confirmDelete() {
+    confirmDelete(item) {
+      this.updateItemId = item.id
       this.$confirm('确认要删除该错题吗？', '提示', {
         confirmButtonText: '删除',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$emit('delete-mistake', this.item.id)
+        this.$emit('delete-mistake', this.updateItemId )
       }).catch(() => {
         // 用户取消，无需处理
       })

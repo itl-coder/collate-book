@@ -76,7 +76,8 @@
                 :item="mistake"
                 :tag-list="tagCountList"
                 @update-tag="handleUpdateTag"
-                @view-details="handleViewDetails"
+                @delete-mistake="handleDelete"
+                @update-weight="handleUpdateWeight"
               />
             </div>
 
@@ -109,7 +110,7 @@
 
 <script>
 import {getSwipperList} from "@/api/carousel/swipper";
-import {frontListAnswer, updateAnswer} from "@/api/errorbook/answer";
+import {delAnswer, frontListAnswer, updateAnswer} from "@/api/errorbook/answer";
 import HeaderNav from "@/views/componests/HeaderNav.vue";
 import CommonFooter from "@/views/componests/CommonFooter.vue";
 import Cookies from "js-cookie";
@@ -170,18 +171,36 @@ export default {
     handleSubjectChange() {
       this.selectedBook = null;
     },
-
+    async handleDelete(id) {
+      console.log("handleDelete: ",id.id)
+      const res = await delAnswer(id)
+      if (res.code == 200) {
+        this.getCollateData();
+        this.$message.success(`错题ID为 ${id} 的题目删除成功`);
+      }
+    },
+    async handleUpdateWeight({mistakeId, sortOrder}) {
+      let userAnswerParam = {
+        id: mistakeId,
+        sortOrder: sortOrder
+      }
+      const res = await updateAnswer(userAnswerParam)
+      console.log("updateAnswer: ", res)
+      if (res.code == 200) {
+        this.getCollateData();
+        this.$message.success("权重更新成功");
+      }
+    },
     // 更新错题标签
     async handleUpdateTag({mistakeId, tagId}) {
       try {
-        console.log(`item: ${mistakeId}, tagId: ${tagId}`)
         let userAnswerParam = {
           id: mistakeId,
           tagId: tagId
         }
         const res = await updateAnswer(userAnswerParam)
-        console.log("updateAnswer: ",res)
-        if(res.code==200){
+        console.log("updateAnswer: ", res)
+        if (res.code == 200) {
           this.getCollateData();
           this.$message.success("标签更新成功");
         }
