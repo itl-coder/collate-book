@@ -123,6 +123,8 @@ export default {
           }
           this.$store.dispatch("Login", this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || "/" }).catch(() => { });
+            // 获取一下用户信息
+            this.$store.dispatch("GetInfo")
           }).catch(() => {
             this.loading = false;
             if (this.captchaEnabled) {

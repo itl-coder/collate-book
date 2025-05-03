@@ -398,29 +398,32 @@ export default {
     total() {
       return this.tableData.length;
     },
-    paginatedData() {
-      const start = (this.currentPage - 1) * this.pageSize;
-      return this.tableData.slice(start, start + this.pageSize);
-    },
   },
   methods: {
-    async getCollateData(){
-      let loginState = Cookies.get("userId")
-      let query = {
-        userId: loginState,
-        subjectName:''
-      }
-      console.log("aa loginState: ",loginState)
-      if(loginState==undefined || loginState==""){
-        this.$message.error("登录已失效,请重新登录!")
+    async getCollateData() {
+      await this.$store.dispatch("GetInfo");
+
+      let loginState = Cookies.get("userId");
+      console.log("after dispatch loginState: ", loginState);
+
+      if (loginState == undefined || loginState == "") {
+        this.$message.error("登录已失效,请重新登录!");
         return;
       }
-      const res=  await frontListAnswer(query)
-      console.log("getCollateData res: ",res)
-      this.collateList = res.data
-    },
-    goToQuestion(){
-      this.$router.push("/my-mistake")
+
+      let query = {
+        userId: loginState,
+        subjectName: ''
+      };
+
+      try {
+        const res = await frontListAnswer(query);
+        console.log("getCollateData res: ", res);
+        this.collateList = res.data;
+      } catch (error) {
+        console.error("请求失败: ", error);
+        this.$message.error("加载数据失败");
+      }
     },
     async fetchSwipperData(){
       const res = await getSwipperList()
