@@ -1,5 +1,5 @@
 <template>
-  <el-header class="app-header">
+  <el-header :class="{'app-header':true,'sticky-shadow':isSticky}">
     <div class="header-content">
       <img
         alt="错题管理系统 Logo"
@@ -22,10 +22,6 @@
           <i class="el-icon-warning"></i>
           <span>我的错题</span>
         </el-menu-item>
-<!--        <el-menu-item index="/notes">-->
-<!--          <i class="el-icon-notebook-2"></i>-->
-<!--          <span>错题笔记</span>-->
-<!--        </el-menu-item>-->
         <el-menu-item index="/stats">
           <i class="el-icon-data-line"></i>
           <span>错题统计</span>
@@ -61,12 +57,18 @@ export default {
   name: 'AppHeader',
   data() {
     return {
+      isSticky: false,
       activeMenu: this.$route.path, // 跟踪当前路由，初始化高亮菜单
       isLoggedIn: false,            // 用户登录状态
       userName: '张三'              // 用户名，假设已登录时有此数据
     };
   },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.handleScroll);
+  },
   mounted() {
+    window.addEventListener('scroll', this.handleScroll);
+
     const loginFlag = Cookies.get("username")
     if(loginFlag!==undefined){
       // 登录
@@ -75,6 +77,10 @@ export default {
     }
   },
   methods: {
+    handleScroll() {
+      const threshold = 10; // 滚动多少触发 sticky 阴影
+      this.isSticky = window.scrollY > threshold;
+    },
     // 跳转到登录页
     redirectToLogin() {
       this.$router.push("/back/index");
@@ -98,12 +104,17 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 0 32px;
-  //box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  box-shadow: 0 2px 8px rgba(255, 27, 27, 0.05);
   color: #1f2d3d;
-  -webkit-box-shadow: none !important;
+
+  /* 添加过渡动画 */
+  transition: box-shadow 0.3s ease-in-out;
+  box-shadow: none; /* 默认无阴影 */
 }
 
+/* 滚动后添加阴影 */
+.sticky-shadow {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
 
 .header-content {
   display: flex;
