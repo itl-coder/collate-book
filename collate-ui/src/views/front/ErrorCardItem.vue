@@ -12,18 +12,34 @@
         </el-tag>
 
         <!-- 操作下拉菜单 -->
+<!--        <el-dropdown @command="handleDropdownCommand">-->
+<!--          <el-button size="mini" icon="el-icon-more" type="primary">-->
+<!--            操作<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+<!--          </el-button>-->
+<!--          <el-dropdown-menu slot="dropdown">-->
+<!--            <el-dropdown-item command="editTag">-->
+<!--              <i class="el-icon-edit"></i> 修改标签-->
+<!--            </el-dropdown-item>-->
+<!--            <el-dropdown-item command="editWeight">-->
+<!--              <i class="el-icon-sort"></i> 修改权重-->
+<!--            </el-dropdown-item>-->
+<!--            <el-dropdown-item divided command="delete">-->
+<!--              <i class="el-icon-delete"></i> 删除-->
+<!--            </el-dropdown-item>-->
+<!--          </el-dropdown-menu>-->
+<!--        </el-dropdown>-->
         <el-dropdown @command="handleDropdownCommand">
           <el-button size="mini" icon="el-icon-more" type="primary">
             操作<i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="editTag">
+            <el-dropdown-item :command="{ action: 'editTag', item }">
               <i class="el-icon-edit"></i> 修改标签
             </el-dropdown-item>
-            <el-dropdown-item command="editWeight">
+            <el-dropdown-item :command="{ action: 'editWeight', item }">
               <i class="el-icon-sort"></i> 修改权重
             </el-dropdown-item>
-            <el-dropdown-item divided command="delete">
+            <el-dropdown-item divided :command="{ action: 'delete', item }">
               <i class="el-icon-delete"></i> 删除
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -114,8 +130,9 @@ export default {
       tagDialogVisible: false,
       weightDialogVisible: false,
       selectedTagId: this.item.tagId,
-      weight: this.item.weight || 1,
-      maxWeight: 5 // 权重最大值
+      weight: this.item.sortOrder || 1,
+      maxWeight: 5 ,// 权重最大值
+      updateItemId:""
     }
   },
   methods: {
@@ -127,19 +144,20 @@ export default {
     },
 
     /** 操作菜单选择处理 */
-    handleDropdownCommand(command) {
-      if (command === 'editTag') {
-        this.showTagDialog()
-      } else if (command === 'editWeight') {
-        this.showWeightDialog()
-      } else if (command === 'delete') {
-        this.confirmDelete()
+    handleDropdownCommand({ action, item }) {
+      // 赋值当前操作的 item（避免弹窗里数据错乱）
+      if (action === 'editTag') {
+        this.showTagDialog(item)
+      } else if (action === 'editWeight') {
+        this.showWeightDialog(item)
+      } else if (action === 'delete') {
+        this.confirmDelete(item)
       }
     },
-
     /** 显示标签选择弹窗 */
-    showTagDialog() {
-      this.selectedTagId = this.item.tagId
+    showTagDialog(item) {
+      console.log("item tagId: ",item)
+      this.updateItemId = item.id
       this.tagDialogVisible = true
     },
 
@@ -147,13 +165,13 @@ export default {
     confirmTagChange() {
       this.tagDialogVisible = false
       this.$emit('update-tag', {
-        mistakeId: this.item.id,
+        mistakeId: this.updateItemId,
         tagId: this.selectedTagId
       })
     },
 
     /** 显示权重弹窗 */
-    showWeightDialog() {
+    showWeightDialog(item) {
       this.weight = this.item.weight || 1
       this.weightDialogVisible = true
     },

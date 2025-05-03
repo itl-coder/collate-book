@@ -3,14 +3,14 @@
     <el-container class="app-container">
       <!-- 顶部导航栏 -->
       <el-header class="sticky-header">
-        <header-nav />
+        <header-nav/>
       </el-header>
 
       <!-- 轮播图 -->
       <div class="banner">
         <el-carousel class="app-carousel" height="580px">
           <el-carousel-item v-for="item in swipperList" :key="item.id">
-            <image-preview :height="580" :src="item.imageUrl" :width="1200" />
+            <image-preview :height="580" :src="item.imageUrl" :width="1200"/>
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -26,7 +26,7 @@
               size="mini"
               @click="toggleSidebar"
             >
-              <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'" />
+              <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"/>
             </el-button>
           </div>
 
@@ -34,10 +34,10 @@
             <!-- 科目下拉框 -->
             <el-select
               v-model="selectedSubject"
-              placeholder="选择科目"
               clearable
-              @change="handleSubjectChange"
+              placeholder="选择科目"
               style="margin-right: 10px;"
+              @change="handleSubjectChange"
             >
               <el-option
                 v-for="subject in subjects"
@@ -50,8 +50,8 @@
             <!-- 教辅下拉框 -->
             <el-select
               v-model="selectedBook"
-              placeholder="选择标签"
               clearable
+              placeholder="选择标签"
               style="margin-right: 10px;"
             >
               <el-option
@@ -102,21 +102,21 @@
       </el-main>
 
       <!-- 底部 -->
-      <common-footer />
+      <common-footer/>
     </el-container>
   </div>
 </template>
 
 <script>
-import { getSwipperList } from "@/api/carousel/swipper";
-import { frontListAnswer } from "@/api/errorbook/answer";
+import {getSwipperList} from "@/api/carousel/swipper";
+import {frontListAnswer, updateAnswer} from "@/api/errorbook/answer";
 import HeaderNav from "@/views/componests/HeaderNav.vue";
 import CommonFooter from "@/views/componests/CommonFooter.vue";
 import Cookies from "js-cookie";
-import { countListTag } from "@/api/errorbook/tag";
+import {countListTag} from "@/api/errorbook/tag";
 import ErrorCardItem from "@/views/front/ErrorCardItem.vue";
-import { countListSubject } from "@/api/errorbook/subject";
-import { countListBook } from "@/api/errorbook/book";
+import {countListSubject} from "@/api/errorbook/subject";
+import {countListBook} from "@/api/errorbook/book";
 
 export default {
   name: "MistakeCollection",
@@ -172,11 +172,19 @@ export default {
     },
 
     // 更新错题标签
-    async handleUpdateTag({ item, tagId }) {
+    async handleUpdateTag({mistakeId, tagId}) {
       try {
-        // 这里应该调用API更新服务器上的标签
-        // await updateTag(item.id, tagId);
-        this.$message.success("标签更新成功");
+        console.log(`item: ${mistakeId}, tagId: ${tagId}`)
+        let userAnswerParam = {
+          id: mistakeId,
+          tagId: tagId
+        }
+        const res = await updateAnswer(userAnswerParam)
+        console.log("updateAnswer: ",res)
+        if(res.code==200){
+          this.getCollateData();
+          this.$message.success("标签更新成功");
+        }
       } catch (error) {
         console.error("更新标签失败:", error);
         this.$message.error("标签更新失败");
@@ -215,11 +223,11 @@ export default {
         subjectId: this.selectedSubject,
         tagId: this.selectedBook,
       };
-      console.log("getCollate quesy: ",query)
+      console.log("getCollate quesy: ", query)
       try {
         const res = await frontListAnswer(query);
-        this.collateList = res.data ;
-        console.log("aa: ",res)
+        this.collateList = res.data;
+        console.log("aa: ", res)
         this.total = res.data.total || res.data.length;
       } catch (error) {
         console.error("加载数据失败:", error);
@@ -241,7 +249,7 @@ export default {
     handlePageChange(page) {
       this.currentPage = page;
       this.getCollateData();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({top: 0, behavior: "smooth"});
     },
 
     // 获取标签列表
