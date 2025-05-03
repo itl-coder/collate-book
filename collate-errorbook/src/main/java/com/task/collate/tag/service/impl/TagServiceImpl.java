@@ -93,4 +93,9 @@ public class TagServiceImpl implements ITagService
     {
         return tagMapper.deleteTagById(id);
     }
+
+    @Override
+    public List<Tag> selectCountTagList() {
+        return tagMapper.selectCountTagList();
+    }
 }

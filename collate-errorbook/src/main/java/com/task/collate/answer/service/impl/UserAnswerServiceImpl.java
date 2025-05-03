@@ -97,7 +97,10 @@ public class UserAnswerServiceImpl implements IUserAnswerService {
     }
 
     @Override
-    public List<UserAnswerVO> selectFrontUserAnswerList(Integer userId, String subjectName) {
-        return userAnswerMapper.selectFrontUserAnswerList(userId, subjectName);
+    public List<UserAnswerVO> selectFrontUserAnswerList(Integer userId,
+                                                        String subjectName,
+                                                        String bookName
+    ) {
+        return userAnswerMapper.selectFrontUserAnswerList(userId, subjectName,bookName);
     }
 }

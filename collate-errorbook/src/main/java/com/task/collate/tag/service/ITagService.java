@@ -58,4 +58,6 @@ public interface ITagService
      * @return 结果
      */
     public int deleteTagById(Long id);
+
+   public List<Tag> selectCountTagList();
 }

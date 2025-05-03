@@ -42,3 +42,10 @@ export function delTag(id) {
     method: 'delete'
   })
 }
+
+export function countListTag() {
+  return request({
+    url: '/errorbook/tag/count/list',
+    method: 'get',
+  })
+}

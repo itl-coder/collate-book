@@ -153,7 +153,7 @@
       </div>
 
       <!-- 分页组件 -->
-      <div class="pagination-container">
+      <div class="pagination-container" v-if="questions.length > pageSize">
         <el-pagination
           :current-page="currentPage"
           :page-size="pageSize"

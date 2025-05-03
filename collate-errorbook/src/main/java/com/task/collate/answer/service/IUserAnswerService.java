@@ -60,5 +60,8 @@ public interface IUserAnswerService
      */
     public int deleteUserAnswerById(Long id);
 
-   public List<UserAnswerVO> selectFrontUserAnswerList(Integer userId,String subjectName);
+   public List<UserAnswerVO> selectFrontUserAnswerList(Integer userId,
+                                                       String subjectName,
+                                                      String bookName
+                                                       );
 }

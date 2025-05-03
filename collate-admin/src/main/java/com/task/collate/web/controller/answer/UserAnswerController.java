@@ -6,14 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.task.collate.answer.domain.vo.UserAnswerVO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.task.collate.common.annotation.Log;
 import com.task.collate.common.core.controller.BaseController;
 import com.task.collate.common.core.domain.AjaxResult;
@@ -51,14 +44,16 @@ public class UserAnswerController extends BaseController
     /**
      * 查询用户作答列表
      */
-    // add@PreAuthorize("@ss.hasPermi('errorbook:answer:list')")
+    // @PreAuthorize("@ss.hasPermi('errorbook:answer:list')")
     @GetMapping("/front/list")
-    public AjaxResult frontLoginUserList(Integer userId,String subjectName)
+    public AjaxResult frontLoginUserList(
+            @RequestParam Integer userId,
+            @RequestParam(required = false) String subjectName,
+            @RequestParam(required = false) String bookName)
     {
-        List<UserAnswerVO> list = userAnswerService.selectFrontUserAnswerList(userId,subjectName);
+        List<UserAnswerVO> list = userAnswerService.selectFrontUserAnswerList(userId,subjectName,bookName);
         return success(list);
     }
-
 
     /**
      * 导出用户作答列表

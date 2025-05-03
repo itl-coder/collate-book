@@ -12,6 +12,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+    <resultMap type="Tag" id="CountTagResult">
+        <result property="id"    column="id"    />
+        <result property="tagName"    column="tag_name"    />
+    </resultMap>
+
     <sql id="selectTagVo">
         select id, tag_name, user_id, create_time, update_time from tag
     </sql>
@@ -28,7 +33,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTagVo"/>
         where id = #{id}
     </select>
-        
+    <select id="selectCountTagList" resultMap="CountTagResult">
+        select id,tag_name from tag group by  id,tag_name
+    </select>
+
     <insert id="insertTag" parameterType="Tag" useGeneratedKeys="true" keyProperty="id">
         insert into tag
         <trim prefix="(" suffix=")" suffixOverrides=",">

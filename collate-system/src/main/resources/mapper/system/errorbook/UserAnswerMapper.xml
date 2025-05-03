@@ -64,11 +64,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  join book b on b.id = q.book_id
         <where>
             add_collate = 1
+            and ua.user_id=#{userId}
             <if test="subjectName!=null and subjectName!=''">
                 and subject_name=#{subjectName}
             </if>
-            <if test="userId!=null and userId!=''">
-                and ua.user_id=#{userId}
+            <if test="bookName!=null and bookName!=''">
+             and book_name like concat('%',#{bookName},'%')
             </if>
         </where> order by sort_order desc;
     </select>

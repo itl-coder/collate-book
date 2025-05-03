@@ -46,6 +46,14 @@ public class TagController extends BaseController
         return getDataTable(list);
     }
 
+    @PreAuthorize("@ss.hasPermi('errorbook:tag:list')")
+    @GetMapping("/count/list")
+    public AjaxResult frontCountTagList()
+    {
+        List<Tag> list = tagService.selectCountTagList();
+        return success(list);
+    }
+
     /**
      * 导出错题标签列表
      */
