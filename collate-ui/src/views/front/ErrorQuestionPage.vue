@@ -90,10 +90,9 @@
             <el-pagination
               :current-page="currentPage"
               :page-size="pageSize"
-              :pager-count="isMobile ? 3 : 5"
               :total="total"
               background
-              layout="prev, pager, next, jumper"
+              layout="total, prev, pager, next, jumper"
               next-text="下一页"
               prev-text="上一页"
               @current-change="handlePageChange"
@@ -246,8 +245,8 @@ export default {
       try {
         const res = await frontListAnswer(query);
         this.collateList = res.data;
-        console.log("aa: ", res)
-        this.total = res.data.total || res.data.length;
+        console.log("aa: ", res.data.length)
+        this.total = res.data.length;
       } catch (error) {
         console.error("加载数据失败:", error);
         this.$message.error("加载数据失败");
