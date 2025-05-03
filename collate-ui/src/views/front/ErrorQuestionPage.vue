@@ -71,8 +71,7 @@
                       </div>
 
                       <div class="question-title">题目：</div>
-                      <div class="question-content">
-                        {{ collate.questionContent }}
+                      <div class="question-content"  v-html="collate.questionContent">
                       </div>
 
                       <div class="answer-block">
